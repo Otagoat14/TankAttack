@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include "Cola.cpp"
 
 using namespace std;
 
@@ -104,22 +104,22 @@ public:
         }
     }
 
-    //Funcion con vector y cola, hay que implementar la cola propia y en vector iria el grafo
+    //Ya la cola fue implementada, queda implementarla con el grafo
     void BFS(int inicio, vector<vector<int>>& adj, int numVertices) {
         vector<bool> visitado(numVertices, false);
-        queue<int> cola;
+        Cola<int> cola;
 
         visitado[inicio] = true;
-        cola.push(inicio);
+        cola.enqueue(inicio);
 
         while (!cola.empty()) {
-            int v = cola.front();
-            cola.pop();
+            int v = cola.getFrente();
+            cola.dequeue();
 
             for (int vecino : adj[v]) {
                 if (!visitado[vecino]) {
                     visitado[vecino] = true;
-                    cola.push(vecino);
+                    cola.enqueue(vecino);
                 }
             }
         }
