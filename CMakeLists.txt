@@ -4,4 +4,5 @@ project(TankAttack)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(TankAttack
-        Personajes.cpp)
+        Personajes.cpp
+        Cola.cpp)

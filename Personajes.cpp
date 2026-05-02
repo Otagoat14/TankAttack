@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -8,11 +9,16 @@ enum class Equipo { JUGADOR1, JUGADOR2 };
 
 string colorATexto(Color color) {
     switch(color) {
-        case Color::AZUL:     return "Azul";
-        case Color::CELESTE:  return "Celeste";
-        case Color::ROJO:     return "Rojo";
-        case Color::AMARILLO: return "Amarillo";
-        default:              return "Desconocido";
+        case Color::AZUL:
+            return "Azul";
+        case Color::CELESTE:
+            return "Celeste";
+        case Color::ROJO:
+            return "Rojo";
+        case Color::AMARILLO:
+            return "Amarillo";
+        default:
+            return "Desconocido";
     }
 }
 
@@ -96,6 +102,29 @@ public:
         } else {
             cout << "La celda esta fuera del mapa o esta bloqueada" << endl;
         }
+    }
+
+    //Funcion con vector y cola, hay que implementar la cola propia y en vector iria el grafo
+    void BFS(int inicio, vector<vector<int>>& adj, int numVertices) {
+        vector<bool> visitado(numVertices, false);
+        queue<int> cola;
+
+        visitado[inicio] = true;
+        cola.push(inicio);
+
+        while (!cola.empty()) {
+            int v = cola.front();
+            cola.pop();
+
+            for (int vecino : adj[v]) {
+                if (!visitado[vecino]) {
+                    visitado[vecino] = true;
+                    cola.push(vecino);
+                }
+            }
+        }
+
+
     }
 };
 
