@@ -1,4 +1,6 @@
 #include <iostream>
+#ifndef COLA_H
+#define COLA_H
 using namespace std;
 
 template <typename T>
@@ -64,3 +66,5 @@ class Cola {
     }
 
 };
+
+#endif
