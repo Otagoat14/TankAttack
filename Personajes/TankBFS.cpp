@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "../TankBFS.h"
+#include "TankBFS.h"
 
 using namespace std;
 

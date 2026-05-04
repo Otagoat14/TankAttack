@@ -1,6 +1,6 @@
 #include <iostream>
-#ifndef COLA_H
-#define COLA_H
+#ifndef UTILS_H
+#define UTILS_H
 using namespace std;
 
 template <typename T>
@@ -66,5 +66,46 @@ class Cola {
     }
 
 };
+
+//Cambiar el vector por el grafo
+inline bool lineaVista(int x0, int y0, int x1, int y1, const vector<vector<bool>>& matriz) {
+
+    int dx = abs(x1 - x0);
+    int dy = abs(y1 - y0);
+
+    //Estas son las direcciones en que se puede mover
+    int dirx = (x0 < x1) ? 1 : -1;  
+    int diry = (y0 < y1) ? 1 : -1;
+    int error = dx - dy;
+
+    int x = x0;
+    int y = y0;
+
+    while (true) {
+
+        //Obstaculo
+        if (matriz[y][x] == false) {
+            return false;
+        }
+
+        //Llego
+        if (x == x1 && y == y1) {
+            return true;
+        }
+
+        // Avanzar en x o en y
+        int error2 = error * 2;
+
+        if (error2 > -dy) {
+            error -= dy;
+            x += dirx;
+        }
+
+        if (error2 < dx) {
+            error += dx;
+            y += diry;
+        }
+    }
+}
 
 #endif
