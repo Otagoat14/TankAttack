@@ -1,33 +1,31 @@
 #include <iostream>
 #include <vector>
-#include "Personajes/Tank.h"
 #include "Personajes/TankBFS.h"
 
+using namespace std;
+
 int main() {
-    int filas = 3;
-    int columnas = 4;
-
-    vector<vector<bool>> matriz(filas, vector<bool>(columnas, false));
-
-    matriz[0][0] = true;
-    matriz[0][1] = true;
-    matriz[1][1] = true;
-    matriz[1][2] = true;
-    matriz[2][2] = true;
-    matriz[2][3] = true;
+    vector<vector<int>> matriz = {
+        {0, 0, 0, 0, 0},
+        {1, 1, 0, 1, 0},
+        {0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1},
+        {0, 0, 0, 0, 0}
+    };
 
     tankBFS tanquePrueba(0, 0, 100, Equipo::JUGADOR1, Color::CELESTE);
+    Posicion inicio = {0, 0};
+    Posicion final = {4, 4};
 
-    while (tanquePrueba.getX() != 3 || tanquePrueba.getY() != 2) {
-        tanquePrueba.moverse(matriz);
-    }
+    vector<Posicion> camino = tanquePrueba.BFS(matriz, inicio, final);
 
-    cout << "\nMapa final:" << endl;
-    for (int i = 0; i < filas; ++i) {
-        for (int j = 0; j < columnas; ++j) {
-            cout << matriz[i][j] << " ";
+    if (!camino.empty()) {
+        cout << "Camino encontrado:" << endl;
+        for (const auto& p : camino) {
+            cout << "(" << p.r << ", " << p.c << ") ";
         }
-        cout << endl;
+    } else {
+        cout << "No hay camino posible." << endl;
     }
 
     return 0;

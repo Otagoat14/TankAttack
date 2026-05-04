@@ -3,14 +3,19 @@
 #define TANKBFS_H
 #include "../Utils.h"
 #include "Tank.h"
+#include <vector>
 
+struct Posicion {
+    int r, c;
+};
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);
     void moverse(vector<vector<bool>>& matriz) override;
 
-    //Ya la cola fue implementada, queda implementarla con el grafo
-    void BFS(int inicio, vector<vector<int>>& adj, int numVertices);
+
+    //Remplazar el vector con el grafo
+    vector<Posicion> BFS(vector<vector<int>>& matriz, Posicion inicio, Posicion final);
 };
 
 
