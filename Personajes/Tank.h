@@ -6,7 +6,7 @@ enum class Color { AZUL, CELESTE, ROJO, AMARILLO };
 enum class Equipo { JUGADOR1, JUGADOR2 };
 
 //Esta funcion esta para cuando toque hacer validaciones de colores
-string colorATexto (Color color)  {
+string colorATexto(Color color) {
     switch(color) {
         case Color::AZUL:
             return "Azul";
@@ -20,7 +20,6 @@ string colorATexto (Color color)  {
             return "Desconocido";
     }
 }
-
 
 
 class Tank {

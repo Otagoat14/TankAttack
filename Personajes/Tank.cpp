@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Tank.h"
+#include "../Tank.h"
 
 using namespace std;
 

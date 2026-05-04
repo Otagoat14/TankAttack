@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(TankAttack
         main.cpp
-        Utils.h
+        Cola.h
         Personajes/Tank.h
         Personajes/TankBFS.h
         Personajes/TankDijkstra.h
