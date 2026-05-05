@@ -11,7 +11,7 @@ struct Posicion {
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(vector<vector<bool>>& matriz) override;
+    void moverse(vector<vector<int>>& matriz) override;
 
 
     //Remplazar el vector con el grafo

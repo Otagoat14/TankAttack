@@ -8,7 +8,7 @@ using namespace std;
 Tank::Tank(int x, int y, int vida, Equipo equipo, Color color)
 : x(x), y(y), vida(vida), equipo(equipo), color(color) {}
 
-void Tank::moverse(vector<vector<bool>>& matriz) {
+void Tank::moverse(vector<vector<int>>& matriz) {
     cout << "Moviendose" << endl;
 }
 
@@ -44,7 +44,7 @@ void Tank::setPosition(int newX, int newY) {
     y = newY;
 }
 
-bool Tank::puedeMoverse(int nx, int ny, const vector<vector<bool>>& matriz) {
+bool Tank::puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz) {
     int filas = matriz.size();
     int columnas = matriz[0].size();
 

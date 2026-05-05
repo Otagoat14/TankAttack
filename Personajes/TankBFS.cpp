@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "TankBFS.h"
+#include "../Utils.h"
 #include <algorithm>
 
 using namespace std;
@@ -8,7 +9,7 @@ using namespace std;
 tankBFS::tankBFS(int x, int y, int vida, Equipo equipo, Color color)
 : Tank(x, y, vida, equipo, color) {}
 
-void tankBFS::moverse(vector<vector<bool>>& matriz){
+void tankBFS::moverse(vector<vector<int>>& matriz){
     int nx, ny;
     cout << "Y: "; cin >> ny;
     cout << "X: "; cin >> nx;
@@ -17,7 +18,7 @@ void tankBFS::moverse(vector<vector<bool>>& matriz){
     int posActualY = getY();
 
     if (puedeMoverse(nx, ny, matriz)) {
-        matriz[posActualY][posActualX] = false;
+        matriz[posActualY][posActualX] = 1;
         setPosition(nx, ny);
         cout << "El tanque se movio a: (" << nx << ", " << ny << ")" << endl;
     } else {

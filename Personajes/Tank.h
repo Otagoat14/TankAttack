@@ -1,6 +1,11 @@
 #ifndef TANK_H
 #define TANK_H
 
+#include <string>
+#include <vector>
+#include "../Utils.h"
+
+
 using namespace std;
 enum class Color { AZUL, CELESTE, ROJO, AMARILLO };
 enum class Equipo { JUGADOR1, JUGADOR2 };
@@ -32,7 +37,7 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
-    virtual void moverse(vector<vector<bool>>& matriz);
+    virtual void moverse(vector<vector<int>>& matriz);
 
     void disparar();
     int getX() const;
@@ -43,7 +48,9 @@ public:
     bool estaVivo() const;
     void recibirDano(int danoRecibido);
     void setPosition(int newX, int newY);
-    bool puedeMoverse(int nx, int ny, const vector<vector<bool>>& matriz);
+    bool puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz);
+    void movimientoAleatorio(int destinoX, int destinoY, vector<vector<int>>& matriz);
+
     virtual ~Tank() = default;
 
 };
