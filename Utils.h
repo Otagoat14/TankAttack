@@ -111,7 +111,7 @@ inline bool lineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>
 
 //Cree la funciom para retornar las celdas que conforman la linea vista, para que asi el tanque se pueda mover
 //Adaptar para hacer luego con el grafo
-inline vector<pair<int,int>> celdасLineaVista(int x0, int y0, int x1, int y1, const vector<vector<bool>>& matriz) {
+inline vector<pair<int,int>> celdаsLineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>& matriz) {
     vector<pair<int,int>> celdas;
 
     int dx  = abs(x1 - x0);

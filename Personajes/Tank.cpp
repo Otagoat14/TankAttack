@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include "Tank.h"
+#include "../Utils.h"
 
 using namespace std;
 
@@ -54,3 +56,76 @@ bool Tank::puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz) {
     return false;
 }
 
+//Cambiar el vector
+void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, vector<vector<int>>& matriz) {
+    for (int i = 1; i < celdas.size(); i++) {
+        matriz[getY()][getX()] = 0;
+        setPosition(celdas[i].first, celdas[i].second);
+    }
+}
+
+//Cambair el vector
+pair<int,int> Tank::buscarPosAleatoria(int radio, const vector<vector<int>>& matriz) {
+    int filas    = matriz.size();
+    int columnas = matriz[0].size();
+
+    vector<pair<int,int>> candidatos;
+
+    for (int dy = -radio; dy <= radio; dy++) {
+        for (int dx = -radio; dx <= radio; dx++) {
+            if (dx == 0 && dy == 0) continue;
+
+            int cx = getX() + dx;
+            int cy = getY() + dy;
+
+            if (cx >= 0 && cy >= 0 && cx < columnas && cy < filas
+                && matriz[cy][cx]) {
+                candidatos.push_back({cx, cy});
+            }
+        }
+    }
+
+    if (candidatos.empty()) {
+        cout << "No hay celdas disponibles en el radio" << endl;
+        return {-1, -1};
+    }
+
+    int indice = rand() % candidatos.size();
+    return candidatos[indice];
+}
+
+void Tank::avanzarHastaDestino(int destinoX, int destinoY, vector<vector<int>>& matriz) {
+
+    vector<pair<int,int>> celdas = celdаsLineaVista(getX(), getY(),destinoX, destinoY, matriz);
+    if (celdas.size() <= 1) {
+        cout << "El tanque no pudo avanzar" << endl;
+        return;
+    }
+
+    // Si la última celda es el destino, llegó completo
+    pair<int,int> ultima = celdas.back();
+    if (ultima.first == destinoX && ultima.second == destinoY) {
+        cout << "Llegó al destino" << endl;
+    } else {
+        cout << "Avanzando hasta donde sea posible" << endl;
+    }
+
+    moverPorCeldas(celdas, matriz);
+}
+
+void Tank::movimientoAleatorio(int destinoX, int destinoY, vector<vector<int>>& matriz) {
+
+    if (lineaVista(getX(), getY(), destinoX, destinoY, matriz)) {
+        cout << "Linea vista libre al destino" << endl;
+        avanzarHastaDestino(destinoX, destinoY, matriz);
+        return;
+    }
+    pair<int,int> P = buscarPosAleatoria(2, matriz);
+
+    if (P.first == -1) {
+        return;
+    }
+    avanzarHastaDestino(P.first, P.second, matriz);
+    cout << "Segundo intento hacia el destino..." << endl;
+    avanzarHastaDestino(destinoX, destinoY, matriz);
+}

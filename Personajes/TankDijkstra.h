@@ -9,7 +9,7 @@
 class tankDijkstra : public Tank {
 public:
     tankDijkstra(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(vector<vector<bool>>& matriz) override;
+    void moverse(vector<vector<int>>& matriz) override;
 };
 
 #endif 
