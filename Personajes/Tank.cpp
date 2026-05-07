@@ -6,35 +6,18 @@
 
 using namespace std;
 
-
-Tank::Tank(int x, int y, int vida, Equipo equipo, Color color)
-: x(x), y(y), vida(vida), equipo(equipo), color(color) {}
-
-void Tank::moverse(vector<vector<int>>& matriz) {
-    cout << "Moviendose" << endl;
-}
+Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), equipo(equipo), color(color) {}
 
 void Tank::disparar() {
-    cout << "Disparar" << endl;
+    // Por implementar
 }
-int Tank::getX() const {
-    return x;
-}
-int Tank::getY() const {
-    return y;
-}
-int Tank::getVida() const {
-    return vida;
-}
-Color Tank::getColor() const {
-    return color;
-}
-Equipo Tank::getEquipo() const {
-    return equipo;
-}
-bool Tank::estaVivo() const {
-    return vida > 0;
-}
+
+int Tank::getX() const { return x; }
+int Tank::getY() const { return y; }
+int Tank::getVida() const { return vida; }
+Color Tank::getColor() const { return color; }
+Equipo Tank::getEquipo() const { return equipo; }
+bool Tank::estaVivo() const { return vida > 0; }
 
 void Tank::recibirDano(int danoRecibido) {
     vida -= danoRecibido;
@@ -47,28 +30,16 @@ void Tank::setPosition(int newX, int newY) {
 }
 
 bool Tank::puedeMoverse(int nx, int ny, const Graph& grafo) {
-    int filas = matriz.size();
-    int columnas = matriz[0].size();
-
-    if (nx >= 0 && ny >= 0 && nx < columnas && ny < filas) {
-        return matriz[ny][nx] == true;
-    }
-    return false;
+    return grafo.esPasable(ny, nx);
 }
 
-//Cambiar el vector
 void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, Graph& grafo) {
-    for (int i = 1; i < celdas.size(); i++) {
-        matriz[getY()][getX()] = 0;
+    for (int i = 1; i < (int)celdas.size(); i++) {
         setPosition(celdas[i].first, celdas[i].second);
     }
 }
 
-//Cambair el vector
 pair<int,int> Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
-    int filas    = matriz.size();
-    int columnas = matriz[0].size();
-
     vector<pair<int,int>> candidatos;
 
     for (int dy = -radio; dy <= radio; dy++) {
@@ -78,8 +49,7 @@ pair<int,int> Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
             int cx = getX() + dx;
             int cy = getY() + dy;
 
-            if (cx >= 0 && cy >= 0 && cx < columnas && cy < filas
-                && matriz[cy][cx]) {
+            if (grafo.esPasable(cy, cx)) {
                 candidatos.push_back({cx, cy});
             }
         }
@@ -90,42 +60,38 @@ pair<int,int> Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
         return {-1, -1};
     }
 
-    int indice = rand() % candidatos.size();
-    return candidatos[indice];
+    return candidatos[rand() % candidatos.size()];
 }
 
 void Tank::avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo) {
+    vector<pair<int,int>> celdas = celdаsLineaVista(getX(), getY(), destinoX, destinoY, grafo);
 
-    vector<pair<int,int>> celdas = celdаsLineaVista(getX(), getY(),destinoX, destinoY, matriz);
     if (celdas.size() <= 1) {
         cout << "El tanque no pudo avanzar" << endl;
         return;
     }
 
-    // Si la última celda es el destino, llegó completo
     pair<int,int> ultima = celdas.back();
     if (ultima.first == destinoX && ultima.second == destinoY) {
-        cout << "Llegó al destino" << endl;
+        cout << "Llego al destino" << endl;
     } else {
         cout << "Avanzando hasta donde sea posible" << endl;
     }
 
-    moverPorCeldas(celdas, matriz);
+    moverPorCeldas(celdas, grafo);
 }
 
 void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
-
-    if (lineaVista(getX(), getY(), destinoX, destinoY, matriz)) {
+    if (lineaVista(getX(), getY(), destinoX, destinoY, grafo)) {
         cout << "Linea vista libre al destino" << endl;
-        avanzarHastaDestino(destinoX, destinoY, matriz);
+        avanzarHastaDestino(destinoX, destinoY, grafo);
         return;
     }
-    pair<int,int> P = buscarPosAleatoria(2, matriz);
 
-    if (P.first == -1) {
-        return;
-    }
-    avanzarHastaDestino(P.first, P.second, matriz);
+    pair<int,int> P = buscarPosAleatoria(2, grafo);
+    if (P.first == -1) return;
+
+    avanzarHastaDestino(P.first, P.second, grafo);
     cout << "Segundo intento hacia el destino..." << endl;
-    avanzarHastaDestino(destinoX, destinoY, matriz);
+    avanzarHastaDestino(destinoX, destinoY, grafo);
 }
