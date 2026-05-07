@@ -45,6 +45,9 @@ public:
 
     //Revisa si tiene vecinos asignados
     bool hasVecino(int u, int v);
+
+    //Me dice si es obstaculo
+    bool esPasable(int row, int col) const;
 };
 
 #endif //TANKATTACK_GRAFO_H

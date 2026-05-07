@@ -2,13 +2,15 @@
 #define UTILS_H
 
 #include <iostream>
-using namespace std;
+#include "str/Grafo.h"
 
-template <typename T>
+using namespace std;
 
 struct Posicion {
     int r, c;
 };
+
+template <typename T>
 
 class Cola {
     struct Nodo {
@@ -74,7 +76,7 @@ class Cola {
 };
 
 //Cambiar el vector por el grafo
-inline bool lineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>& matriz) {
+inline bool lineaVista(int x0, int y0, int x1, int y1, const Graph& grafo) {
 
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
@@ -90,7 +92,7 @@ inline bool lineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>
     while (true) {
 
         //Obstaculo
-        if (matriz[y][x] == false) {
+        if (!grafo.esPasable(y, x)) {
             return false;
         }
 
@@ -114,39 +116,4 @@ inline bool lineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>
     }
 }
 
-//Cree la funciom para retornar las celdas que conforman la linea vista, para que asi el tanque se pueda mover
-//Adaptar para hacer luego con el grafo
-inline vector<pair<int,int>> celdаsLineaVista(int x0, int y0, int x1, int y1, const vector<vector<int>>& matriz) {
-    vector<pair<int,int>> celdas;
-
-    int dx  = abs(x1 - x0);
-    int dy  = abs(y1 - y0);
-    int sx  = (x0 < x1) ? 1 : -1;
-    int sy  = (y0 < y1) ? 1 : -1;
-    int err = dx - dy;
-
-    int x = x0;
-    int y = y0;
-
-    while (true) {
-        if (!matriz[y][x]) {
-            break;
-        }
-        celdas.push_back({x, y});
-
-        if (x == x1 && y == y1) {
-            break;
-        }
-
-        int err2 = err * 2;
-        if (err2 > -dy) {
-            err -= dy; x += sx;
-        }
-        if (err2 < dx) {
-            err += dx; y += sy;
-        }
-    }
-
-    return celdas;
-};
 #endif

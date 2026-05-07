@@ -1,6 +1,7 @@
 
 #ifndef TANKBFS_H
 #define TANKBFS_H
+#include <iostream>
 #include "../Utils.h"
 #include "Tank.h"
 #include <vector>

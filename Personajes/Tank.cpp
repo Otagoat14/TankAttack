@@ -46,7 +46,7 @@ void Tank::setPosition(int newX, int newY) {
     y = newY;
 }
 
-bool Tank::puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz) {
+bool Tank::puedeMoverse(int nx, int ny, const Graph& grafo) {
     int filas = matriz.size();
     int columnas = matriz[0].size();
 
@@ -57,7 +57,7 @@ bool Tank::puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz) {
 }
 
 //Cambiar el vector
-void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, vector<vector<int>>& matriz) {
+void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, Graph& grafo) {
     for (int i = 1; i < celdas.size(); i++) {
         matriz[getY()][getX()] = 0;
         setPosition(celdas[i].first, celdas[i].second);
@@ -65,7 +65,7 @@ void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, vector<vector<int
 }
 
 //Cambair el vector
-pair<int,int> Tank::buscarPosAleatoria(int radio, const vector<vector<int>>& matriz) {
+pair<int,int> Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
     int filas    = matriz.size();
     int columnas = matriz[0].size();
 
@@ -94,7 +94,7 @@ pair<int,int> Tank::buscarPosAleatoria(int radio, const vector<vector<int>>& mat
     return candidatos[indice];
 }
 
-void Tank::avanzarHastaDestino(int destinoX, int destinoY, vector<vector<int>>& matriz) {
+void Tank::avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo) {
 
     vector<pair<int,int>> celdas = celdаsLineaVista(getX(), getY(),destinoX, destinoY, matriz);
     if (celdas.size() <= 1) {
@@ -113,7 +113,7 @@ void Tank::avanzarHastaDestino(int destinoX, int destinoY, vector<vector<int>>& 
     moverPorCeldas(celdas, matriz);
 }
 
-void Tank::movimientoAleatorio(int destinoX, int destinoY, vector<vector<int>>& matriz) {
+void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
 
     if (lineaVista(getX(), getY(), destinoX, destinoY, matriz)) {
         cout << "Linea vista libre al destino" << endl;

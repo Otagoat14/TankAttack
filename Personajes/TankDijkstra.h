@@ -1,8 +1,9 @@
 #ifndef TANKDIJKSTRA_H
 #define TANKDIJKSTRA_H
+#include <iostream>
 #include "Tank.h"
 #include "../Utils.h"
-#include "../Grafo.h"
+#include "../str/Grafo.h"
 
 
 

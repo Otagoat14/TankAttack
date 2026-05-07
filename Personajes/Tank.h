@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "../Utils.h"
+#include "../str/Grafo.h"
 
 
 
@@ -50,17 +51,17 @@ public:
     void recibirDano(int danoRecibido);
     void setPosition(int newX, int newY);
     //Igual aqui, cambiar el vector por el grafo
-    bool puedeMoverse(int nx, int ny, const vector<vector<int>>& matriz);
-    void movimientoAleatorio(int destinoX, int destinoY, vector<vector<int>>& matriz);
+    bool puedeMoverse(int nx, int ny, const Graph& grafo);
+    void movimientoAleatorio(int destinoX, int destinoY, Graph& grafo);
 
     virtual ~Tank() = default;
 
 
 private:
     //No olvidar cambiar el vector por el grafo luego
-    void moverPorCeldas(const vector<pair<int,int>>& celdas, vector<vector<int>>& matriz);
-    pair<int,int> buscarPosAleatoria(int radio, const vector<vector<int>>& matriz);
-    void avanzarHastaDestino(int destinoX, int destinoY, vector<vector<int>>& matriz);
+    void moverPorCeldas(const vector<pair<int,int>>& celdas, Graph& grafo);
+    pair<int,int> buscarPosAleatoria(int radio, const Graph& grafo);
+    void avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo);
 
 };
 

@@ -91,6 +91,16 @@ void Graph::getVecinos(int n, int* vecinos, int& numvecinos)
     }
 }
 
+bool Graph::esPasable(int row, int col) const {
+    int nodo = getNodo(row, col);
+    for (int i = 0; i < totalNodes; i++) {
+        if (matrix[nodo * totalNodes + i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 //Destructor
 Graph::~Graph() {
     delete[] matrix;
