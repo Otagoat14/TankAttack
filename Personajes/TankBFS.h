@@ -5,9 +5,7 @@
 #include "Tank.h"
 #include <vector>
 
-struct Posicion {
-    int r, c;
-};
+
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);

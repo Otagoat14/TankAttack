@@ -5,6 +5,11 @@
 using namespace std;
 
 template <typename T>
+
+struct Posicion {
+    int r, c;
+};
+
 class Cola {
     struct Nodo {
         T dato;

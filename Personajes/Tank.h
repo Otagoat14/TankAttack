@@ -6,6 +6,7 @@
 #include "../Utils.h"
 
 
+
 using namespace std;
 enum class Color { AZUL, CELESTE, ROJO, AMARILLO };
 enum class Equipo { JUGADOR1, JUGADOR2 };
@@ -37,7 +38,7 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 //Cambiar el vector por el grafo
-    virtual void moverse(vector<vector<int>>& matriz);
+    virtual void moverse(Gr);
 
     void disparar();
     int getX() const;
