@@ -105,27 +105,3 @@ bool Graph::esPasable(int row, int col) const {
 Graph::~Graph() {
     delete[] matrix;
 }
-
-//Main de prueba Eliminar tras depuracion
-#include <iostream>
-
-int main() {
-    Graph g(4, 4);
-
-    // Conectar (0,0) con (0,1) y (1,0)
-    g.addVecinos(g.getNodo(0,0), g.getNodo(0,1));
-    g.addVecinos(g.getNodo(0,0), g.getNodo(1,0));
-
-    // Verificar vecinos de (0,0)
-    int vecinos[4];
-    int count = 0;
-    g.getVecinos(g.getNodo(0,0), vecinos, count);
-
-    std::cout << "Vecinos de (0,0): " << count << std::endl;
-    for (int i = 0; i < count; i++) {
-        std::cout << vecinos[i] << std::endl;
-    }
-
-    // Debería imprimir 2 vecinos: nodo 1 y nodo 4
-    return 0;
-}
