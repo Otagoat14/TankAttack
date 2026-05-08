@@ -31,7 +31,7 @@ Graph::Graph(int rows, int cols) {
     }
 }
 
-int Graph::getNodo(int i, int j)
+int Graph::getNodo(int i, int j) const
 {
     return i * cols + j;
 }

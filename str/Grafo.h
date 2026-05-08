@@ -38,7 +38,7 @@ public:
     void getVecinos(int node, int* neighbors, int& count);
 
     // Convierte coordenadas (row, col) a índice del nodo
-    int getNodo(int row, int col);
+    int getNodo(int row, int col) const;
 
     // Convierte índice de nodo a coordenadas
     void getCords(int n, int &row, int &col);
