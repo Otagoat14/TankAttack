@@ -33,52 +33,68 @@ bool Tank::puedeMoverse(int nx, int ny, const Graph& grafo) {
     return grafo.esPasable(ny, nx);
 }
 
-void Tank::moverPorCeldas(const vector<pair<int,int>>& celdas, Graph& grafo) {
-    for (int i = 1; i < (int)celdas.size(); i++) {
-        setPosition(celdas[i].first, celdas[i].second);
+void Tank::moverPorCeldas(const Camino& camino, Graph& grafo) {
+    NodoCamino* actual = camino.getCabeza();
+
+    // Saltamos el primer nodo ya que es la posición actual del tanque
+    if (actual != nullptr)
+        actual = actual->siguiente;
+
+    while (actual != nullptr) {
+        setPosition(actual->x, actual->y);
+        actual = actual->siguiente;
     }
 }
 
-pair<int,int> Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
-    vector<pair<int,int>> candidatos;
-
+Punto Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
+    // Primera pasada: contar candidatos válidos
+    int count = 0;
     for (int dy = -radio; dy <= radio; dy++) {
         for (int dx = -radio; dx <= radio; dx++) {
             if (dx == 0 && dy == 0) continue;
-
-            int cx = getX() + dx;
-            int cy = getY() + dy;
-
-            if (grafo.esPasable(cy, cx)) {
-                candidatos.push_back({cx, cy});
-            }
+            if (grafo.esPasable(getY() + dy, getX() + dx))
+                count++;
         }
     }
 
-    if (candidatos.empty()) {
-        cout << "No hay celdas disponibles en el radio" << endl;
-        return {-1, -1};
-    }
+    if (count == 0) return Punto(-1, -1);
 
-    return candidatos[rand() % candidatos.size()];
+    // Segunda pasada: elegir el índice aleatorio
+    int elegido = rand() % count;
+    int actual = 0;
+    for (int dy = -radio; dy <= radio; dy++) {
+        for (int dx = -radio; dx <= radio; dx++) {
+            if (dx == 0 && dy == 0) continue;
+            if (grafo.esPasable(getY() + dy, getX() + dx)) {
+                if (actual == elegido)
+                    return Punto(getX() + dx, getY() + dy);
+                actual++;
+            }
+        }
+    }
+    return Punto(-1, -1);
 }
 
 void Tank::avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo) {
-    vector<pair<int,int>> celdas = celdаsLineaVista(getX(), getY(), destinoX, destinoY, grafo);
+    Camino camino = celdаsLineaVista(getX(), getY(), destinoX, destinoY, grafo);
 
-    if (celdas.size() <= 1) {
+    if (camino.getTamano() <= 1) {
         cout << "El tanque no pudo avanzar" << endl;
         return;
     }
 
-    pair<int,int> ultima = celdas.back();
-    if (ultima.first == destinoX && ultima.second == destinoY) {
+    // Revisar si el ultimo nodo es el destino
+    NodoCamino* actual = camino.getCabeza();
+    while (actual->siguiente != nullptr)
+        actual = actual->siguiente;
+
+    if (actual->x == destinoX && actual->y == destinoY) {
         cout << "Llego al destino" << endl;
     } else {
         cout << "Avanzando hasta donde sea posible" << endl;
     }
 
-    moverPorCeldas(celdas, grafo);
+    moverPorCeldas(camino, grafo);
 }
 
 void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
@@ -88,10 +104,10 @@ void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
         return;
     }
 
-    pair<int,int> P = buscarPosAleatoria(2, grafo);
-    if (P.first == -1) return;
+    Punto p = buscarPosAleatoria(2, grafo);
+    if (p.x == -1) return;
 
-    avanzarHastaDestino(P.first, P.second, grafo);
+    avanzarHastaDestino(p.x, p.y, grafo);
     cout << "Segundo intento hacia el destino..." << endl;
     avanzarHastaDestino(destinoX, destinoY, grafo);
 }

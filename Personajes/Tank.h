@@ -48,8 +48,8 @@ public:
     virtual ~Tank() = default;
 
 private:
-    void moverPorCeldas(const vector<pair<int,int>>& celdas, Graph& grafo);
-    pair<int,int> buscarPosAleatoria(int radio, const Graph& grafo);
+    void moverPorCeldas(const Camino& camino, Graph& grafo);
+    Punto buscarPosAleatoria(int radio, const Graph& grafo);
     void avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo);
 };
 

@@ -115,6 +115,11 @@ public:
     bool empty() const { return cabeza == nullptr; }
 };
 
+struct Punto {
+    int x, y;
+    Punto(int x = -1, int y = -1) : x(x), y(y) {}
+};
+
 //Cambiar el vector por el grafo
 inline bool lineaVista(int x0, int y0, int x1, int y1, const Graph& grafo) {
 
