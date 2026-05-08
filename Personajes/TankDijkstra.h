@@ -11,9 +11,9 @@
 class tankDijkstra : public Tank {
 public:
     tankDijkstra(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(vector<vector<int>>& matriz) override;
+    void moverse(int nx, int ny, Graph& grafo) override;
 
-    vector<Posicion> Dijkstra(Graph& grafo, PosicionD inicio, PosicionD destino);
+    vector<Posicion> Dijkstra(Graph& grafo, Posicion inicio, Posicion destino);
 };
 
 #endif

@@ -1,21 +1,19 @@
-
 #ifndef TANKBFS_H
 #define TANKBFS_H
-#include <iostream>
-#include "../Utils.h"
-#include "Tank.h"
-#include <vector>
 
+#include "Tank.h"
+#include "../Utils.h"
+#include "../str/Grafo.h"
 
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(vector<vector<int>>& matriz) override;
+    void moverse(int nx, int ny, Graph& grafo) override;
 
-
-    //Remplazar el vector con el grafo
-    vector<Posicion> BFS(vector<vector<int>>& matriz, Posicion inicio, Posicion final);
+private:
+    Camino BFS(Graph& grafo, Posicion inicio, Posicion destino);
+    bool explorarBFS(Graph& grafo, Cola<int>& cola, bool* visitado, int* padre, int nodoDestino);
+    Camino reconstruirCamino(Graph& grafo, int* padre, int nodoDestino);
 };
-
 
 #endif

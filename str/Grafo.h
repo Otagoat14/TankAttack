@@ -48,6 +48,9 @@ public:
 
     //Me dice si es obstaculo
     bool esPasable(int row, int col) const;
+
+    //Devuelve el total de nodos
+    int getTotalNodos() const { return totalNodes; }
 };
 
 #endif //TANKATTACK_GRAFO_H

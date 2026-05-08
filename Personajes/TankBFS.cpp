@@ -1,79 +1,100 @@
-#include <iostream>
-#include <vector>
 #include "TankBFS.h"
-#include "../Utils.h"
-#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
 tankBFS::tankBFS(int x, int y, int vida, Equipo equipo, Color color)
-: Tank(x, y, vida, equipo, color) {}
+    : Tank(x, y, vida, equipo, color) {}
 
-void tankBFS::moverse(vector<vector<int>>& matriz){
-    int nx, ny;
-    cout << "Y: "; cin >> ny;
-    cout << "X: "; cin >> nx;
+void tankBFS::moverse(int nx, int ny, Graph& grafo) {
+    Posicion inicio  = {getY(), getX()};
+    Posicion destino = {ny, nx};
 
-    int posActualX = getX();
-    int posActualY = getY();
+    Camino camino = BFS(grafo, inicio, destino);
 
-    if (puedeMoverse(nx, ny, matriz)) {
-        matriz[posActualY][posActualX] = 1;
-        setPosition(nx, ny);
-        cout << "El tanque se movio a: (" << nx << ", " << ny << ")" << endl;
-    } else {
-        cout << "La celda esta fuera del mapa o esta bloqueada" << endl;
+    if (camino.empty()) {
+        cout << "No hay camino al destino" << endl;
+        return;
     }
+
+    moverPorCeldas(camino, grafo);
 }
 
-//Ya la cola fue implementada, queda implementarla con el grafo
-vector<Posicion> tankBFS::BFS(vector<vector<int>>& matriz, Posicion inicio, Posicion final) {
+Camino tankBFS::BFS(Graph& grafo, Posicion inicio, Posicion destino) {
+    int totalNodos = grafo.getTotalNodos();
 
-    //Direcciones en x y
-    int dy[] = {-1, 1, 0, 0};
-    int dx[] = {0, 0, -1, 1};
+    bool* visitado = new bool[totalNodos];
+    int*  padre    = new int[totalNodos];
+    for (int i = 0; i < totalNodos; i++) {
+        visitado[i] = false;
+        padre[i]    = -1;
+    }
 
-    int filas = matriz.size();
-    int columnas = matriz[0].size();
+    int nodoInicio  = grafo.getNodo(inicio.r, inicio.c);
+    int nodoDestino = grafo.getNodo(destino.r, destino.c);
 
-    //Celdas visitadas
-    vector<vector<bool>> visitado(filas, vector<bool>(columnas, false));
-    //Reconstruir el camino
-    vector<vector<Posicion>> padre(filas, vector<Posicion>(columnas, {-1, -1}));
+    Cola<int> cola;
+    cola.enqueue(nodoInicio);
+    visitado[nodoInicio] = true;
 
-    Cola<Posicion> cola;
-    cola.enqueue(inicio);
-    visitado[inicio.r][inicio.c] = true;
+    bool encontrado = explorarBFS(grafo, cola, visitado, padre, nodoDestino);
 
+    Camino camino;
+    if (encontrado)
+        camino = reconstruirCamino(grafo, padre, nodoDestino);
+
+    delete[] visitado;
+    delete[] padre;
+    return camino;
+}
+
+bool tankBFS::explorarBFS(Graph& grafo, Cola<int>& cola, bool* visitado, int* padre, int nodoDestino) {
     while (!cola.empty()) {
-        Posicion actual = cola.getFrente();
-        cola.dequeue();
+        int actual = cola.dequeue();
 
-        //Llegar al objetivo
-        if (actual.r == final.r && actual.c == final.c) {
-            vector<Posicion> camino;
-            for (Posicion p = final; p.r != -1; p = padre[p.r][p.c]) {
-                camino.push_back(p);
+        if (actual == nodoDestino)
+            return true;
+
+        int vecinos[4];
+        int numVecinos = 0;
+        grafo.getVecinos(actual, vecinos, numVecinos);
+
+        for (int i = 0; i < numVecinos; i++) {
+            if (!visitado[vecinos[i]]) {
+                visitado[vecinos[i]] = true;
+                padre[vecinos[i]]    = actual;
+                cola.enqueue(vecinos[i]);
             }
-            reverse(camino.begin(), camino.end());
-            return camino;
-        }
-
-        //Ver a los 4 vecinos
-        for (int i = 0; i < 4; i++) {
-            int nr = actual.r + dy[i];
-            int nc = actual.c + dx[i];
-
-            //Ver si esta bloqueado o fuera del mapa
-            if (nr >= 0 && nr < filas && nc >= 0 && nc < columnas &&
-                matriz[nr][nc] == 0 && !visitado[nr][nc]) {
-
-                visitado[nr][nc] = true;
-                padre[nr][nc] = actual;
-                cola.enqueue({nr, nc});
-                }
         }
     }
-    //Retorna vacio ni no hay ningun camino
-    return {};
+    return false;
+}
+
+Camino tankBFS::reconstruirCamino(Graph& grafo, int* padre, int nodoDestino) {
+    // Primera pasada: contar longitud
+    int longitud = 0;
+    int actual   = nodoDestino;
+    while (actual != -1) {
+        longitud++;
+        actual = padre[actual];
+    }
+
+    // Arreglo temporal para invertir
+    int* ruta = new int[longitud];
+    actual    = nodoDestino;
+    for (int i = longitud - 1; i >= 0; i--) {
+        ruta[i] = actual;
+        actual  = padre[actual];
+    }
+
+    // Construir Camino
+    Camino camino;
+    for (int i = 0; i < longitud; i++) {
+        int row, col;
+        grafo.getCords(ruta[i], row, col);
+        camino.push(col, row);
+    }
+
+    delete[] ruta;
+    return camino;
 }

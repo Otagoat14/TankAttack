@@ -31,7 +31,7 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
-    virtual void moverse(Graph& grafo) = 0;
+    virtual void moverse(int nx, int ny, Graph& grafo);
     void disparar();
 
     int getX() const;
@@ -47,7 +47,7 @@ public:
 
     virtual ~Tank() = default;
 
-private:
+protected:
     void moverPorCeldas(const Camino& camino, Graph& grafo);
     Punto buscarPosAleatoria(int radio, const Graph& grafo);
     void avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo);
