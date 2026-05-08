@@ -70,31 +70,3 @@ bool tankBFS::explorarBFS(Graph& grafo, Cola<int>& cola, bool* visitado, int* pa
     return false;
 }
 
-Camino tankBFS::reconstruirCamino(Graph& grafo, int* padre, int nodoDestino) {
-    // Primera pasada: contar longitud
-    int longitud = 0;
-    int actual   = nodoDestino;
-    while (actual != -1) {
-        longitud++;
-        actual = padre[actual];
-    }
-
-    // Arreglo temporal para invertir
-    int* ruta = new int[longitud];
-    actual    = nodoDestino;
-    for (int i = longitud - 1; i >= 0; i--) {
-        ruta[i] = actual;
-        actual  = padre[actual];
-    }
-
-    // Construir Camino
-    Camino camino;
-    for (int i = 0; i < longitud; i++) {
-        int row, col;
-        grafo.getCords(ruta[i], row, col);
-        camino.push(col, row);
-    }
-
-    delete[] ruta;
-    return camino;
-}

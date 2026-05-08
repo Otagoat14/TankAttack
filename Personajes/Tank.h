@@ -51,6 +51,7 @@ protected:
     void moverPorCeldas(const Camino& camino, Graph& grafo);
     Punto buscarPosAleatoria(int radio, const Graph& grafo);
     void avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo);
+    Camino reconstruirCamino(Graph& grafo, int* padre, int nodoDestino); 
 };
 
 #endif

@@ -111,3 +111,32 @@ void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
     cout << "Segundo intento hacia el destino..." << endl;
     avanzarHastaDestino(destinoX, destinoY, grafo);
 }
+
+Camino Tank::reconstruirCamino(Graph& grafo, int* padre, int nodoDestino) {
+    // Primera pasada - contar longitud
+    int longitud = 0;
+    int actual   = nodoDestino;
+    while (actual != -1) {
+        longitud++;
+        actual = padre[actual];
+    }
+
+    // Arreglo temporal para invertir
+    int* ruta = new int[longitud];
+    actual    = nodoDestino;
+    for (int i = longitud - 1; i >= 0; i--) {
+        ruta[i] = actual;
+        actual  = padre[actual];
+    }
+
+    // Construir Camino
+    Camino camino;
+    for (int i = 0; i < longitud; i++) {
+        int row, col;
+        grafo.getCords(ruta[i], row, col);
+        camino.push(col, row);
+    }
+
+    delete[] ruta;
+    return camino;
+}
