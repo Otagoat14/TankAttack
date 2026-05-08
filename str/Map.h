@@ -15,6 +15,7 @@ private:
     int cols;
     int numObstaculos;
     Graph& grafo;
+    int totalNodes;
 
 public:
     Map(Graph& grafo, int rows, int cols, int porcentaje);
