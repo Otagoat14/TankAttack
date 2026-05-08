@@ -120,6 +120,55 @@ struct Punto {
     Punto(int x = -1, int y = -1) : x(x), y(y) {}
 };
 
+
+struct NodoPQ {
+    int nodo;
+    int costo;
+    NodoPQ* siguiente;
+    NodoPQ(int nodo, int costo) : nodo(nodo), costo(costo), siguiente(nullptr) {}
+};
+
+class ColaPrioridad {
+    NodoPQ* cabeza;
+
+public:
+    ColaPrioridad() : cabeza(nullptr) {}
+
+    ~ColaPrioridad() {
+        while (cabeza != nullptr) {
+            NodoPQ* temp = cabeza;
+            cabeza = cabeza->siguiente;
+            delete temp;
+        }
+    }
+
+    void insertar(int nodo, int costo) {
+        NodoPQ* nuevo = new NodoPQ(nodo, costo);
+        // Lista ordenada por costo ascendente
+        if (cabeza == nullptr || costo < cabeza->costo) {
+            nuevo->siguiente = cabeza;
+            cabeza = nuevo;
+            return;
+        }
+        NodoPQ* actual = cabeza;
+        while (actual->siguiente != nullptr && actual->siguiente->costo <= costo)
+            actual = actual->siguiente;
+        nuevo->siguiente = actual->siguiente;
+        actual->siguiente = nuevo;
+    }
+
+    int extraerMin() {
+        if (cabeza == nullptr) return -1;
+        NodoPQ* temp = cabeza;
+        int nodo = temp->nodo;
+        cabeza = cabeza->siguiente;
+        delete temp;
+        return nodo;
+    }
+
+    bool empty() const { return cabeza == nullptr; }
+};
+
 //Cambiar el vector por el grafo
 inline bool lineaVista(int x0, int y0, int x1, int y1, const Graph& grafo) {
 
