@@ -51,6 +51,7 @@ Camino tankBFS::BFS(Graph& grafo, Posicion inicio, Posicion destino) {
 bool tankBFS::explorarBFS(Graph& grafo, Cola<int>& cola, bool* visitado, int* padre, int nodoDestino) {
     while (!cola.empty()) {
         int actual = cola.dequeue();
+        cout << "Explorando nodo : " << actual << endl;
 
         if (actual == nodoDestino)
             return true;

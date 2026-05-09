@@ -35,16 +35,16 @@ public:
     void delVecinos(int u, int v);
 
     // Retorna los vecinos de un nodo
-    void getVecinos(int node, int* neighbors, int& count);
+    void getVecinos(int node, int* neighbors, int& count) const;
 
     // Convierte coordenadas (row, col) a índice del nodo
     int getNodo(int row, int col) const;
 
     // Convierte índice de nodo a coordenadas
-    void getCords(int n, int &row, int &col);
+    void getCords(int n, int &row, int &col) const;
 
     //Revisa si tiene vecinos asignados
-    bool hasVecino(int u, int v);
+    bool hasVecino(int u, int v) const;
 
     //Me dice si es obstaculo
     bool esPasable(int row, int col) const;

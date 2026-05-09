@@ -13,7 +13,6 @@ public:
 private:
     Camino BFS(Graph& grafo, Posicion inicio, Posicion destino);
     bool explorarBFS(Graph& grafo, Cola<int>& cola, bool* visitado, int* padre, int nodoDestino);
-    Camino reconstruirCamino(Graph& grafo, int* padre, int nodoDestino);
 };
 
 #endif

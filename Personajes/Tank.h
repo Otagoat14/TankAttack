@@ -2,7 +2,6 @@
 #define TANK_H
 
 #include <string>
-#include <vector>
 #include "../Utils.h"
 #include "../str/Grafo.h"
 
@@ -31,7 +30,7 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
-    virtual void moverse(int nx, int ny, Graph& grafo);
+    virtual void moverse(int nx, int ny, Graph& grafo) = 0;
     void disparar();
 
     int getX() const;
@@ -51,7 +50,7 @@ protected:
     void moverPorCeldas(const Camino& camino, Graph& grafo);
     Punto buscarPosAleatoria(int radio, const Graph& grafo);
     void avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo);
-    Camino reconstruirCamino(Graph& grafo, int* padre, int nodoDestino); 
+    Camino reconstruirCamino(Graph& grafo, int* padre, int nodoDestino);
 };
 
 #endif
