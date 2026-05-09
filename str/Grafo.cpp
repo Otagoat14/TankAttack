@@ -36,7 +36,7 @@ int Graph::getNodo(int i, int j) const
     return i * cols + j;
 }
 
-void Graph::getCords(int n, int &i, int &j)
+void Graph::getCords(int n, int &i, int &j) const
 {
     i = n / cols;
     j = n % cols;
@@ -56,12 +56,12 @@ void Graph::delVecinos(int n1, int n2) {
 
 }
 
-bool Graph:: hasVecino(int u, int v)
+bool Graph:: hasVecino(int u, int v) const
 {
     return matrix[u * totalNodes + v];
 }
 
-void Graph::getVecinos(int n, int* vecinos, int& numvecinos)
+void Graph::getVecinos(int n, int* vecinos, int& numvecinos) const
 {
     // Columnas y filas
     int i,j;
