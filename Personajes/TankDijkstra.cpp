@@ -1,16 +1,17 @@
 #include "TankDijkstra.h"
 #include <iostream>
+#include <climits>
 
 using namespace std;
 
 tankDijkstra::tankDijkstra(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
-void tankDijkstra::moverse(int nx, int ny, Graph& grafo) {
+void tankDijkstra::moverse(int nx, int ny, Graph& grafo, Map& map) {
     Posicion inicio  = {getY(), getX()};
     Posicion destino = {ny, nx};
 
-    Camino camino = Dijkstra(grafo, inicio, destino);
+    Camino camino = Dijkstra(grafo, map, inicio, destino);
 
     if (camino.empty()) {
         cout << "No hay camino al destino" << endl;
@@ -20,7 +21,7 @@ void tankDijkstra::moverse(int nx, int ny, Graph& grafo) {
     moverPorCeldas(camino, grafo);
 }
 
-Camino tankDijkstra::Dijkstra(Graph& grafo, Posicion inicio, Posicion destino) {
+Camino tankDijkstra::Dijkstra(Graph& grafo, Map& map, Posicion inicio, Posicion destino) {
     int totalNodos = grafo.getTotalNodos();
 
     int*  distancias = new int[totalNodos];
@@ -41,7 +42,7 @@ Camino tankDijkstra::Dijkstra(Graph& grafo, Posicion inicio, Posicion destino) {
     ColaPrioridad pq;
     pq.insertar(nodoInicio, 0);
 
-    bool encontrado = explorarDijkstra(grafo, pq, distancias, padre, visitado, nodoDestino);
+    bool encontrado = explorarDijkstra(grafo, map, pq, distancias, padre, visitado, nodoDestino);
 
     Camino camino;
     if (encontrado)
@@ -53,7 +54,7 @@ Camino tankDijkstra::Dijkstra(Graph& grafo, Posicion inicio, Posicion destino) {
     return camino;
 }
 
-bool tankDijkstra::explorarDijkstra(Graph& grafo, ColaPrioridad& pq, int* distancias, int* padre, bool* visitado, int nodoDestino) {
+bool tankDijkstra::explorarDijkstra(Graph& grafo, Map& map, ColaPrioridad& pq, int* distancias, int* padre, bool* visitado, int nodoDestino) {
     while (!pq.empty()) {
         int actual = pq.extraerMin();
 
@@ -72,8 +73,11 @@ bool tankDijkstra::explorarDijkstra(Graph& grafo, ColaPrioridad& pq, int* distan
             int vecino = vecinos[i];
             if (visitado[vecino]) continue;
 
-            // Peso 1 para todas las aristas
-            int nuevoCosto = distancias[actual] + 1;
+            // Usar peso real del mapa
+            int peso = map.getPeso(vecino);
+            if (peso == -1) continue;  // obstaculo, saltar
+
+            int nuevoCosto = distancias[actual] + peso;
 
             if (nuevoCosto < distancias[vecino]) {
                 distancias[vecino] = nuevoCosto;

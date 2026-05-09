@@ -6,7 +6,7 @@ using namespace std;
 tankBFS::tankBFS(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
-void tankBFS::moverse(int nx, int ny, Graph& grafo) {
+void tankBFS::moverse(int nx, int ny, Graph& grafo, Map& map) {
     Posicion inicio  = {getY(), getX()};
     Posicion destino = {ny, nx};
 

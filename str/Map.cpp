@@ -30,7 +30,7 @@
 #include "Map.h"
 #include <ctime>
 #include "Grafo.h"
-#include "C:/Datos 2/TankAttack/Utils.h"
+#include "../Utils.h"
 #include <iostream>
 using namespace std;
 

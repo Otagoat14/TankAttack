@@ -4,6 +4,7 @@
 #include <string>
 #include "../Utils.h"
 #include "../str/Grafo.h"
+#include "../str/Map.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
-    virtual void moverse(int nx, int ny, Graph& grafo) = 0;
+    virtual void moverse(int nx, int ny, Graph& grafo, Map& map ) = 0;
     void disparar();
 
     int getX() const;

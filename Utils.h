@@ -88,6 +88,34 @@ class Camino {
 
 public:
     Camino() : cabeza(nullptr), cola(nullptr), tamano(0) {}
+    // Constructor de copia
+    Camino(const Camino& otro) : cabeza(nullptr), cola(nullptr), tamano(0) {
+        NodoCamino* actual = otro.cabeza;
+        while (actual != nullptr) {
+            push(actual->x, actual->y);
+            actual = actual->siguiente;
+        }
+    }
+
+    Camino& operator=(const Camino& otro) {
+        if (this == &otro) return *this;
+        NodoCamino* actual = cabeza;
+        while (actual != nullptr) {
+            NodoCamino* siguiente = actual->siguiente;
+            delete actual;
+            actual = siguiente;
+        }
+        cabeza = nullptr;
+        cola   = nullptr;
+        tamano = 0;
+
+        actual = otro.cabeza;
+        while (actual != nullptr) {
+            push(actual->x, actual->y);
+            actual = actual->siguiente;
+        }
+        return *this;
+    }
 
     ~Camino() {
         NodoCamino* actual = cabeza;

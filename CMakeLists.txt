@@ -8,6 +8,8 @@ add_executable(TankAttack
         Utils.h
         str/Grafo.cpp
         str/Grafo.h
+        str/Map.cpp
+        str/Map.h
         Personajes/Tank.h
         Personajes/TankBFS.h
         Personajes/TankDijkstra.h

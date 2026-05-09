@@ -1,107 +1,158 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "str/Grafo.h"
+#include "str/Map.h"
 #include "Personajes/Tank.h"
 #include "Personajes/TankBFS.h"
 #include "Personajes/TankDijkstra.h"
 
 using namespace std;
 
-// Construye un grafo de filas x cols conectando todas las celdas libres
-// obstacles es un arreglo de pares (row, col) que representan obstáculos
-void construirGrafo(Graph& grafo, int filas, int cols, int* obsRows, int* obsCols, int numObs) {
-
-    // Marcar celdas bloqueadas
-    bool* bloqueado = new bool[filas * cols];
-    for (int i = 0; i < filas * cols; i++)
-        bloqueado[i] = false;
-
-    for (int i = 0; i < numObs; i++)
-        bloqueado[obsRows[i] * cols + obsCols[i]] = true;
-
-    // Conectar celdas libres con sus vecinos libres
-    for (int r = 0; r < filas; r++) {
-        for (int c = 0; c < cols; c++) {
-            if (bloqueado[r * cols + c]) continue;
-
-            int nodo = grafo.getNodo(r, c);
-
-            // Vecino derecho
-            if (c + 1 < cols && !bloqueado[r * cols + (c + 1)])
-                grafo.addVecinos(nodo, grafo.getNodo(r, c + 1));
-
-            // Vecino abajo
-            if (r + 1 < filas && !bloqueado[(r + 1) * cols + c])
-                grafo.addVecinos(nodo, grafo.getNodo(r + 1, c));
-        }
-    }
-
-    delete[] bloqueado;
-}
-
-void imprimirGrafo(Graph& grafo, int filas, int cols, int xBFS, int yBFS, int xDijk, int yDijk) {
+void imprimirMapa(Map& map, Graph& grafo, int filas, int cols,
+                  int xBFS, int yBFS, int xDijk, int yDijk) {
     for (int r = 0; r < filas; r++) {
         for (int c = 0; c < cols; c++) {
             int nodo = grafo.getNodo(r, c);
-            int vecinos[4];
-            int count = 0;
-            grafo.getVecinos(nodo, vecinos, count);
+            int peso = map.getPeso(nodo);
 
             if (r == yBFS && c == xBFS)
                 cout << " B ";
             else if (r == yDijk && c == xDijk)
                 cout << " D ";
-            else if (count == 0)
+            else if (peso == -1)
                 cout << " # ";
+            else if (peso == 2)
+                cout << " ~ ";  // barro
+            else if (peso == 5)
+                cout << " W ";  // inundado
             else
                 cout << " . ";
         }
         cout << endl;
     }
+    cout << "B=TankBFS  D=TankDijkstra  #=obstaculo  ~=barro  W=inundado  .=libre" << endl;
 }
 
 int main() {
-    const int FILAS = 6;
-    const int COLS  = 6;
+    srand(time(nullptr));
 
-    // Obstáculos en (row, col)
-    int obsRows[] = {1, 1, 2, 3, 3};
-    int obsCols[] = {2, 3, 2, 2, 3};
-    int numObs    = 5;
+    const int FILAS = 10;
+    const int COLS  = 10;
+    const int PORC_OBSTACULOS = 20;  // 20% de obstaculos
 
+    // Crear grafo y mapa
     Graph grafo(FILAS, COLS);
-    construirGrafo(grafo, FILAS, COLS, obsRows, obsCols, numObs);
+    Map   map(grafo, FILAS, COLS, PORC_OBSTACULOS);
+    map.doMapa();
 
-    // BFS empieza en (col=0, row=0), destino (col=5, row=5)
-    tankBFS tanqueBFS(1, 1, 100, Equipo::JUGADOR1, Color::AZUL);
+    cout << "=== Mapa generado ===" << endl;
 
-    // Dijkstra empieza en (col=5, row=0), destino (col=0, row=5)
-    tankDijkstra tanqueDijkstra(5, 0, 100, Equipo::JUGADOR2, Color::ROJO);
+    // Buscar posiciones libres para los tanques
+    // TankBFS en esquina superior izquierda
+    int xBFS = -1, yBFS = -1;
+    for (int r = 0; r < FILAS && xBFS == -1; r++)
+        for (int c = 0; c < COLS && xBFS == -1; c++)
+            if (map.getPeso(grafo.getNodo(r, c)) != -1) {
+                yBFS = r; xBFS = c;
+            }
 
-    cout << "=== Mapa inicial ===" << endl;
-    cout << "B = TankBFS, D = TankDijkstra, # = obstaculo, . = libre" << endl;
-    imprimirGrafo(grafo, FILAS, COLS, tanqueBFS.getX(), tanqueBFS.getY(), tanqueDijkstra.getX(), tanqueDijkstra.getY());
+    // TankDijkstra en esquina inferior derecha
+    int xDijk = -1, yDijk = -1;
+    for (int r = FILAS - 1; r >= 0 && xDijk == -1; r--)
+        for (int c = COLS - 1; c >= 0 && xDijk == -1; c--)
+            if (map.getPeso(grafo.getNodo(r, c)) != -1) {
+                yDijk = r; xDijk = c;
+            }
 
-    cout << "\n=== Moviendo TankBFS hacia (5,5) ===" << endl;
-    tanqueBFS.moverse(5, 5, grafo);
+    cout << "TankBFS inicio:      (" << xBFS  << ", " << yBFS  << ")" << endl;
+    cout << "TankDijkstra inicio: (" << xDijk << ", " << yDijk << ")" << endl;
+
+    tankBFS      tanqueBFS(xBFS,  yBFS,  100, Equipo::JUGADOR1, Color::AZUL);
+    tankDijkstra tanqueDijk(xDijk, yDijk, 100, Equipo::JUGADOR2, Color::ROJO);
+
+    imprimirMapa(map, grafo, FILAS, COLS,
+                 tanqueBFS.getX(),  tanqueBFS.getY(),
+                 tanqueDijk.getX(), tanqueDijk.getY());
+
+    // =====================
+    // PRUEBA BFS
+    // =====================
+    cout << "\n=== PRUEBA BFS ===" << endl;
+    cout << "Moviendo TankBFS hacia TankDijkstra (" << xDijk << ", " << yDijk << ")" << endl;
+    tanqueBFS.moverse(xDijk, yDijk, grafo, map);
     cout << "TankBFS posicion final: (" << tanqueBFS.getX() << ", " << tanqueBFS.getY() << ")" << endl;
 
-    cout << "\n=== Mapa tras movimiento BFS ===" << endl;
-    imprimirGrafo(grafo, FILAS, COLS, tanqueBFS.getX(), tanqueBFS.getY(), tanqueDijkstra.getX(), tanqueDijkstra.getY());
+    imprimirMapa(map, grafo, FILAS, COLS,
+                 tanqueBFS.getX(),  tanqueBFS.getY(),
+                 tanqueDijk.getX(), tanqueDijk.getY());
 
-    cout << "\n=== Moviendo TankDijkstra hacia (0,5) ===" << endl;
-    tanqueDijkstra.moverse(0, 5, grafo);
-    cout << "TankDijkstra posicion final: (" << tanqueDijkstra.getX() << ", " << tanqueDijkstra.getY() << ")" << endl;
+    // =====================
+    // PRUEBA DIJKSTRA
+    // =====================
+    cout << "\n=== PRUEBA DIJKSTRA ===" << endl;
+    cout << "Moviendo TankDijkstra hacia TankBFS (" << xBFS << ", " << yBFS << ")" << endl;
+    tanqueDijk.moverse(xBFS, yBFS, grafo, map);
+    cout << "TankDijkstra posicion final: (" << tanqueDijk.getX() << ", " << tanqueDijk.getY() << ")" << endl;
 
-    cout << "\n=== Mapa final ===" << endl;
-    imprimirGrafo(grafo, FILAS, COLS, tanqueBFS.getX(), tanqueBFS.getY(), tanqueDijkstra.getX(), tanqueDijkstra.getY());
+    imprimirMapa(map, grafo, FILAS, COLS,
+                 tanqueBFS.getX(),  tanqueBFS.getY(),
+                 tanqueDijk.getX(), tanqueDijk.getY());
 
-    cout << "\n=== Probando dano ===" << endl;
+    // =====================
+    // PRUEBA MOVIMIENTO ALEATORIO
+    // =====================
+    cout << "\n=== PRUEBA MOVIMIENTO ALEATORIO ===" << endl;
+
+    // Buscar destino aleatorio libre para cada tanque
+    int xDestBFS = -1, yDestBFS = -1;
+    while (xDestBFS == -1) {
+        int r = rand() % FILAS;
+        int c = rand() % COLS;
+        if (map.getPeso(grafo.getNodo(r, c)) != -1) {
+            yDestBFS = r; xDestBFS = c;
+        }
+    }
+
+    int xDestDijk = -1, yDestDijk = -1;
+    while (xDestDijk == -1) {
+        int r = rand() % FILAS;
+        int c = rand() % COLS;
+        if (map.getPeso(grafo.getNodo(r, c)) != -1) {
+            yDestDijk = r; xDestDijk = c;
+        }
+    }
+
+    cout << "TankBFS movimiento aleatorio hacia ("
+         << xDestBFS << ", " << yDestBFS << ")" << endl;
+    tanqueBFS.movimientoAleatorio(xDestBFS, yDestBFS, grafo);
+    cout << "TankBFS posicion final: ("
+         << tanqueBFS.getX() << ", " << tanqueBFS.getY() << ")" << endl;
+
+    imprimirMapa(map, grafo, FILAS, COLS,
+                 tanqueBFS.getX(),  tanqueBFS.getY(),
+                 tanqueDijk.getX(), tanqueDijk.getY());
+
+    cout << "\nTankDijkstra movimiento aleatorio hacia ("
+         << xDestDijk << ", " << yDestDijk << ")" << endl;
+    tanqueDijk.movimientoAleatorio(xDestDijk, yDestDijk, grafo);
+    cout << "TankDijkstra posicion final: ("
+         << tanqueDijk.getX() << ", " << tanqueDijk.getY() << ")" << endl;
+
+    imprimirMapa(map, grafo, FILAS, COLS,
+                 tanqueBFS.getX(),  tanqueBFS.getY(),
+                 tanqueDijk.getX(), tanqueDijk.getY());
+
+    // =====================
+    // PRUEBA DAÑO
+    // =====================
+    cout << "\n=== PRUEBA DANO ===" << endl;
     tanqueBFS.recibirDano(25);
-    cout << "Vida TankBFS: " << tanqueBFS.getVida() << endl;
-    tanqueDijkstra.recibirDano(50);
-    cout << "Vida TankDijkstra: " << tanqueDijkstra.getVida() << endl;
-    cout << "TankBFS vivo: " << (tanqueBFS.estaVivo() ? "si" : "no") << endl;
-    cout << "TankDijkstra vivo: " << (tanqueDijkstra.estaVivo() ? "si" : "no") << endl;
+    cout << "Vida TankBFS:      " << tanqueBFS.getVida()  << "/100" << endl;
+    tanqueDijk.recibirDano(50);
+    cout << "Vida TankDijkstra: " << tanqueDijk.getVida() << "/100" << endl;
+    cout << "TankBFS vivo:      " << (tanqueBFS.estaVivo()  ? "si" : "no") << endl;
+    cout << "TankDijkstra vivo: " << (tanqueDijk.estaVivo() ? "si" : "no") << endl;
 
     return 0;
 }
