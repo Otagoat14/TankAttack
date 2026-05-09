@@ -2,9 +2,9 @@
 #define TANK_H
 
 #include <string>
-#include "../Utils.h"
-#include "../str/Grafo.h"
-#include "../str/Map.h"
+#include "../../Utils.h"
+#include "../../str/Grafo.h"
+#include "../../str/Map.h"
 
 using namespace std;
 

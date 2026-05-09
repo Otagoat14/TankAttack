@@ -3,9 +3,9 @@
 #include <ctime>
 #include "str/Grafo.h"
 #include "str/Map.h"
-#include "Personajes/Tank.h"
-#include "Personajes/TankBFS.h"
-#include "Personajes/TankDijkstra.h"
+#include "Personajes/Tanques/Tank.h"
+#include "Personajes/Tanques/TankBFS.h"
+#include "Personajes/Tanques/TankDijkstra.h"
 
 using namespace std;
 

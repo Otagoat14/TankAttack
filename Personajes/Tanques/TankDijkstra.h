@@ -2,9 +2,9 @@
 #define TANKDIJKSTRA_H
 
 #include "Tank.h"
-#include "../Utils.h"
-#include "../str/Grafo.h"
-#include "../str/Map.h"
+#include "../../Utils.h"
+#include "../../str/Grafo.h"
+#include "../../str/Map.h"
 
 class tankDijkstra : public Tank {
 public:
