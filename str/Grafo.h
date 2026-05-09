@@ -51,6 +51,8 @@ public:
 
     //Devuelve el total de nodos
     int getTotalNodos() const { return totalNodes; }
+
+    void reset();
 };
 
 #endif //TANKATTACK_GRAFO_H

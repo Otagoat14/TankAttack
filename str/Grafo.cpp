@@ -101,6 +101,12 @@ bool Graph::esPasable(int row, int col) const {
     return false;
 }
 
+void Graph::reset() {
+    for (int i = 0; i < totalNodes * totalNodes; i++) {
+        matrix[i] = false;
+    }
+}
+
 //Destructor
 Graph::~Graph() {
     delete[] matrix;

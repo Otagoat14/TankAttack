@@ -22,10 +22,16 @@ public:
     ~Map();
 
     //Funcion Encargada de la generacion de el mapa
-    void generateMap();
+    void makeMapa();
 
     //Funcion encargada de obtenerel peso de un nodo
     int getPeso(int nodo);
+
+    // Revisa que todas las secciones del mapa sea accesibles
+    bool verificaAcceso();
+
+    //Funcion encargada de llamar la generacion del mapa y verificar que sea un mapa viable
+    void doMapa();
 };
 
 #endif //TANKATTACK_MAP_H
