@@ -1,4 +1,4 @@
-#include "../TankDijkstra.h"
+#include "TankDijkstra.h"
 #include <iostream>
 #include <climits>
 

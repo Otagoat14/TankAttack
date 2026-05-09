@@ -1,4 +1,4 @@
-#include "../TankBFS.h"
+#include "TankBFS.h"
 #include <iostream>
 
 using namespace std;

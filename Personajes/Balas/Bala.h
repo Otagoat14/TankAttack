@@ -4,7 +4,7 @@
 
 #include "../../Utils.h"
 #include "../../str/Grafo.h"
-#include "Tank.h"
+#include "../Tanques/Tank.h"
 
 //Para modificar mas facil la cantidad de rebotes
 const int MAX_REBOTES = 4;

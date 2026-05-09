@@ -16,4 +16,5 @@ add_executable(TankAttack
         Personajes/Tanques/Tank.cpp
         Personajes/Tanques/TankBFS.cpp
         Personajes/Tanques/TankDijkstra.cpp
-        Personajes/Balas/Bala.h)
+        Personajes/Balas/Bala.h
+        Personajes/Balas/Bala.cpp)

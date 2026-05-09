@@ -32,7 +32,7 @@ public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
     virtual void moverse(int nx, int ny, Graph& grafo, Map& map ) = 0;
-    void disparar();
+    void disparar(int destinoX, int destinoY, Graph& grafo, Tank** tanques, int numTanques);
 
     int getX() const;
     int getY() const;

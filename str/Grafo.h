@@ -52,6 +52,9 @@ public:
     //Devuelve el total de nodos
     int getTotalNodos() const { return totalNodes; }
 
+    int getCols() const { return cols; }
+    int getRows() const { return rows; }
+
     void reset();
 };
 

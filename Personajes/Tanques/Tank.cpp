@@ -1,13 +1,24 @@
 #include <iostream>
-#include "../Tank.h"
+#include "Tank.h"
 #include "../../Utils.h"
+#include "../Balas/Bala.h"
 
 using namespace std;
 
 Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), equipo(equipo), color(color) {}
 
-void Tank::disparar() {
-    // Por implementar
+void Tank::disparar(int destinoX, int destinoY, Graph& grafo, Tank** tanques, int numTanques) {
+
+    Bala bala(getX(), getY(), destinoX, destinoY, this);
+
+    while (bala.estaActiva()) {
+        bala.mover(grafo);
+
+        Tank* golpeado = bala.verificarColision(tanques, numTanques);
+        if (golpeado != nullptr) {
+            bala.aplicarDano(golpeado);
+        }
+    }
 }
 
 int Tank::getX() const { return x; }
