@@ -19,6 +19,7 @@ add_executable(TankAttack
         Personajes/Tanques/TankBFS.cpp
         Personajes/Tanques/TankDijkstra.cpp
         Personajes/Balas/Bala.cpp
+        Interfaz/MenuRenderer.cpp
 )
 
 target_link_libraries(TankAttack
