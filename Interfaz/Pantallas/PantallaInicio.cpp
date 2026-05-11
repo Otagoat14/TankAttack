@@ -14,8 +14,8 @@ PantallaInicio::PantallaInicio(int ancho, int alto,
 
     srand(time(nullptr));
     construirFondo();
+    construirFondoTitulo();
     construirTitulo();
-    construirLineas();
     construirTextoExtra();
 
     botonJugar = new Boton(
@@ -107,19 +107,20 @@ void PantallaInicio::construirTitulo() {
     }
 }
 
-void PantallaInicio::construirLineas() {
-    float cy = alto * 0.38f;
+void PantallaInicio::construirFondoTitulo() {
+    float tituloX    = ancho / 2.0f;
+    float tituloY    = alto * 0.22f;
+    float anchoRect  = 820;
+    float altoRect   = 100;
 
-    lineaArriba.setSize(sf::Vector2f(900, 3));
-    lineaArriba.setOrigin(450, 1);
-    lineaArriba.setPosition(ancho / 2.0f, cy - 30);
-    lineaArriba.setFillColor(sf::Color(100, 120, 60, 180));
-
-    lineaAbajo.setSize(sf::Vector2f(900, 3));
-    lineaAbajo.setOrigin(450, 1);
-    lineaAbajo.setPosition(ancho / 2.0f, cy + 10);
-    lineaAbajo.setFillColor(sf::Color(100, 120, 60, 180));
+    fondoTitulo.setSize(sf::Vector2f(anchoRect, altoRect));
+    fondoTitulo.setOrigin(anchoRect / 2.0f, altoRect / 2.0f);
+    fondoTitulo.setPosition(tituloX, tituloY + 30);
+    fondoTitulo.setFillColor(UIColores::PANEL_OSCURO);
+    fondoTitulo.setOutlineColor(sf::Color(210, 95, 25));
+    fondoTitulo.setOutlineThickness(3);
 }
+
 
 
 void PantallaInicio::construirTextoExtra() {
@@ -435,22 +436,21 @@ void PantallaInicio::dibujarChispas(sf::RenderWindow& v) {
 }
 
 void PantallaInicio::dibujarTitulo(sf::RenderWindow& v) {
+    v.draw(fondoTitulo);
     v.draw(lineaArriba);
     v.draw(lineaAbajo);
 
     for (auto& l : letras) {
-        // Sombra de la letra
         sf::Text sombra = l.texto;
-        sombra.setFillColor(sf::Color(0, 0, 0, 120));
+        sombra.setFillColor(sf::Color(0, 0, 0, 140));
         sombra.setOutlineThickness(0);
         sombra.move(3, 3);
         v.draw(sombra);
 
-        // Letra con offset de vibración
         sf::Vector2f pos = l.texto.getPosition();
         l.texto.setPosition(pos.x + l.offsetX, pos.y + l.offsetY);
         v.draw(l.texto);
-        l.texto.setPosition(pos);  // restaurar
+        l.texto.setPosition(pos);
     }
 }
 

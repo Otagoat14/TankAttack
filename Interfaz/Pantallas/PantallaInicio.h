@@ -88,12 +88,12 @@ class PantallaInicio {
     sf::Clock relojBajas;    // genera nuevas balas en el fondo
     sf::Clock relojExplos;   // genera explosiones aleatorias
 
-    
+    sf::RectangleShape      fondoTitulo;     // rectángulo central
 
     // ── Construcción ──
     void construirFondo();
+    void construirFondoTitulo();
     void construirTitulo();
-    void construirLineas();
     void construirTextoExtra();
 
     // ── Actualización ──
