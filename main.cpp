@@ -1,18 +1,27 @@
 #include <SFML/Graphics.hpp>
-#include "Interfaz/MenuRenderer.h"
+#include "Interfaz/Pantallas/PantallaInicio.h"
 
 int main() {
     sf::RenderWindow ventana(
-        sf::VideoMode(800, 600),
+        sf::VideoMode(1280, 720),
         "Tank Attack!",
         sf::Style::Close
     );
     ventana.setFramerateLimit(60);
 
-    MenuRenderer menu(800, 600);
-    bool enMenu = true;
+    bool enJuego = false;
+    bool corriendo = true;
 
-    while (ventana.isOpen() && enMenu) {
+    PantallaInicio* pantalla = new PantallaInicio(
+        1280, 720,
+        [&]() { enJuego   = true;  },   // onJugar
+        [&]() { corriendo = false; }    // onSalir
+    );
+
+    sf::Clock reloj;
+
+    while (ventana.isOpen() && corriendo) {
+        float dt = reloj.restart().asSeconds();
         sf::Vector2i mousePos = sf::Mouse::getPosition(ventana);
 
         sf::Event evento;
@@ -20,18 +29,22 @@ int main() {
             if (evento.type == sf::Event::Closed)
                 ventana.close();
 
-            ResultadoMenu resultado = menu.manejarEvento(evento, mousePos);
-            if (resultado == ResultadoMenu::JUGAR) enMenu = false;
-            if (resultado == ResultadoMenu::SALIR) ventana.close();
+            if (!enJuego)
+                pantalla->manejarEvento(evento, mousePos);
         }
 
-        menu.actualizar();
-        menu.dibujar(ventana);
+        ventana.clear();
+
+        if (!enJuego) {
+            pantalla->actualizar(dt, mousePos);
+            pantalla->dibujar(ventana);
+        } else {
+            // Aquí irá la pantalla del juego
+        }
+
         ventana.display();
     }
 
-    // Aquí irá el loop del juego
-    // while (ventana.isOpen()) { ... }
-
+    delete pantalla;
     return 0;
 }

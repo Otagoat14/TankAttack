@@ -19,13 +19,10 @@ add_executable(TankAttack
         Personajes/Tanques/TankBFS.cpp
         Personajes/Tanques/TankDijkstra.cpp
         Personajes/Balas/Bala.cpp
-        Interfaz/MenuRenderer.cpp
+        Interfaz/Pantallas/PantallaInicio.cpp
         Interfaz/UI/UIManager.h
-        Interfaz/UI/Boton.h
         Interfaz/UI/Boton.cpp
-        Interfaz/UI/Texto.h
         Interfaz/UI/Texto.cpp
-        Interfaz/UI/BarraVida.h
         Interfaz/UI/BarraVida.cpp
 )
 
