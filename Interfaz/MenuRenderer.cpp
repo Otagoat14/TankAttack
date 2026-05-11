@@ -34,7 +34,7 @@ void MenuRenderer::construirCamuflaje() {
 
     // Parches de camuflaje aleatorios
     sf::Color colores[] = { COLOR_CAMU_1, COLOR_CAMU_2, COLOR_CAMU_3 };
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 110; i++) {
         sf::RectangleShape parche;
         float w = 40 + rand() % 120;
         float h = 30 + rand() % 80;
@@ -118,7 +118,7 @@ void MenuRenderer::construirBotones() {
     brilloJugar.setFillColor(sf::Color(180, 190, 160, 60));
 
     textoJugar.setFont(fuente);
-    textoJugar.setString("> JUGAR");
+    textoJugar.setString("--JUGAR--");
     textoJugar.setCharacterSize(18);
     textoJugar.setFillColor(COLOR_BLANCO_DESG);
     centrarTexto(textoJugar, 328);
@@ -137,7 +137,7 @@ void MenuRenderer::construirBotones() {
     brilloSalir.setFillColor(sf::Color(180, 190, 160, 60));
 
     textoSalir.setFont(fuente);
-    textoSalir.setString("> SALIR");
+    textoSalir.setString("--SALIR--");
     textoSalir.setCharacterSize(18);
     textoSalir.setFillColor(COLOR_BLANCO_DESG);
     centrarTexto(textoSalir, 408);
@@ -188,7 +188,7 @@ void MenuRenderer::construirTanqueDecorativo(TanqueDecorativo& t,
 // ─── Puntos de impacto ───────────────────────────────────────────────────────
 
 void MenuRenderer::construirPuntosImpacto() {
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 60; i++) {
         PuntoImpacto p;
         float radio = 2 + rand() % 5;
         p.estrella.setRadius(radio);

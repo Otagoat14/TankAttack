@@ -39,7 +39,7 @@ class MenuRenderer {
     sf::Text tituloSombra1;
     sf::Text tituloSombra2;
     sf::Text titulo;
-    sf::RectangleShape bordesTitulo[4];  // bordes metálicos
+    sf::RectangleShape bordesTitulo[50];  // bordes metálicos
 
     // Botones
     sf::RectangleShape fondoJugar;
