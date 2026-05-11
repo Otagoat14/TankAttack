@@ -21,6 +21,9 @@ add_executable(TankAttack
         Personajes/Balas/Bala.cpp
         Interfaz/MenuRenderer.cpp
         Interfaz/UI/UIManager.h
+        Interfaz/UI/Boton.h
+        Interfaz/UI/Boton.cpp
+        Interfaz/UI/Texto.h
 )
 
 target_link_libraries(TankAttack
