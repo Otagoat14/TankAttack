@@ -25,6 +25,8 @@ add_executable(TankAttack
         Interfaz/UI/Boton.cpp
         Interfaz/UI/Texto.h
         Interfaz/UI/Texto.cpp
+        Interfaz/UI/BarraVida.h
+        Interfaz/UI/BarraVida.cpp
 )
 
 target_link_libraries(TankAttack
