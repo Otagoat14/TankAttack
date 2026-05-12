@@ -15,6 +15,7 @@ add_executable(TankAttack
         main.cpp
         str/Grafo.cpp
         str/Map.cpp
+        str/MapRender.cpp
         Personajes/Tanques/Tank.cpp
         Personajes/Tanques/TankBFS.cpp
         Personajes/Tanques/TankDijkstra.cpp

@@ -8,11 +8,17 @@
 #include "../UI/Texto.h"
 #include "../UI/BarraVida.h"
 #include "../UI/UIManager.h"
+#include "C:/Datos 2/TankAttack//str/MapRender.h"
 
 using namespace std;
 
 class PantallaJuego {
     int ancho, alto;
+
+    //Necesarias para el dibujo del mapa
+    Graph* grafo;
+    Map* mapa;
+    MapRender* mapRender;
 
     // ── Fondo general ──
     sf::RectangleShape fondoGeneral;
@@ -65,6 +71,9 @@ class PantallaJuego {
     void dibujarAreaMapa(sf::RenderWindow& v);
     void dibujarPanelInferior(sf::RenderWindow& v);
     void dibujarPanelPowerUps(sf::RenderWindow& v);
+
+    //Costruir mapa
+    void construirMapa();
 
 public:
     PantallaJuego(int ancho, int alto, function<void()> onMenuPrincipal);

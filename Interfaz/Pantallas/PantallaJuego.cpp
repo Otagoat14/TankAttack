@@ -18,6 +18,7 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
     construirPanelSuperior();
     construirAreaMapa();
     construirPanelInferior();
+    construirMapa();
     //construirPanelPowerUps();
 
     botonMenu = new Boton(
@@ -40,6 +41,9 @@ PantallaJuego::~PantallaJuego() {
         delete barraVidaJ2[i];
     }
     delete botonMenu;
+    delete mapRender;
+    delete mapa;
+    delete grafo;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,6 +138,17 @@ void PantallaJuego::construirAreaMapa() {
     );
 }
 
+void PantallaJuego::construirMapa()
+{
+    grafo = new Graph(18, 43);
+    mapa  = new Map(*grafo, 18, 43, 20);
+    mapa->doMapa();
+    mapRender = new MapRender(*mapa, *grafo,
+        MARGEN, ALTO_PANEL_SUP + MARGEN,
+        ancho - MARGEN * 2,
+        alto - ALTO_PANEL_SUP - ALTO_PANEL_INF - MARGEN * 2
+    );
+};
 // ─────────────────────────────────────────────────────────────────────────────
 // Panel inferior
 // ─────────────────────────────────────────────────────────────────────────────
@@ -287,7 +302,7 @@ void PantallaJuego::dibujarPanelSuperior(sf::RenderWindow& v) {
 void PantallaJuego::dibujarAreaMapa(sf::RenderWindow& v) {
     v.draw(bordeMapa);
     v.draw(areaMapaFondo);
-    v.draw(textoPlaceholderMapa);
+    mapRender->dibujar(v);
 }
 
 void PantallaJuego::dibujarPanelInferior(sf::RenderWindow& v) {
