@@ -1,7 +1,3 @@
-//
-// Created by nacho on 5/11/2026.
-//
-
 #ifndef TANKATTACK_MAPRENDER_H
 #define TANKATTACK_MAPRENDER_H
 
@@ -9,55 +5,46 @@
 #include "Map.h"
 #include "Grafo.h"
 
-
 class MapRender {
 private:
     Map& mapa;
     Graph& grafo;
 
-    //Tamano de cada celda
     int cellSize;
-    //Origen relativo del mapa en la ventana en x
     int offsetX;
-    //Origen relativo del mapa en la ventana en y
     int offsetY;
-    //Ancho del mapa en pixeles
     int anchoMapa;
-    //Alto del mapa en pixeles
     int altoMapa;
-    //Columnas
     int colm;
-    //Filas
     int filas;
 
-    struct DatosCelda
-    {
-        sf::RectangleShape base;
-        bool seleccionado;
+    // ── Texturas (una por tipo de terreno) ──
+    sf::Texture texCesped;    // peso  1
+    sf::Texture texBarro;     // peso  2
+    sf::Texture texAgua;      // peso  5
+    sf::Texture texMontain;   // peso -1
+    bool        texturasCargadas;
+
+    struct DatosCelda {
+        sf::Sprite  sprite;
+        bool        seleccionado;
     };
 
     DatosCelda* celda;
 
+    void cargarTexturas();
     void construirMapa();
-
-    sf::Color getColor(int peso);
+    sf::Texture& getTextura(int peso);   // devuelve la textura según el peso
 
 public:
-    //Constructor
-    MapRender(Map& mapa, Graph& grafo, int offsetX, int offsetY, int areaW, int areaH);
-    //Destructor
+    MapRender(Map& mapa, Graph& grafo,
+              int offsetX, int offsetY,
+              int areaW, int areaH);
     ~MapRender();
 
-    //Obtiene mediante pixeles que celda es
-    sf::Vector2i obtenerCelda( int px, int py);
-
-    //Obtiene las coordenadas en pixeles del centro de la celda
-    sf::Vector2f obtenerCentro( int fila, int colm);
-
-    //Dibuja el mapa
+    sf::Vector2i obtenerCelda(int px, int py);
+    sf::Vector2f obtenerCentro(int fila, int colm);
     void dibujar(sf::RenderWindow& ventana);
-
 };
 
-
-#endif //TANKATTACK_MAPRENDER_H
+#endif

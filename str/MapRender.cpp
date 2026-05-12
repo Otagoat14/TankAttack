@@ -1,16 +1,14 @@
-//
-// Created by nacho on 5/11/2026.
-//
-
 #include "MapRender.h"
+#include <iostream>
 
-MapRender::MapRender(Map& mapa, Graph& grafo, int offsetX, int offsetY, int areaX, int areaY)
-:grafo(grafo), mapa(mapa)
+MapRender::MapRender(Map& mapa, Graph& grafo,
+                     int offsetX, int offsetY,
+                     int areaX, int areaY)
+    : grafo(grafo), mapa(mapa)
 {
     this->filas = grafo.getRows();
-    this->colm = grafo.getCols();
+    this->colm  = grafo.getCols();
 
-    //
     celda = new DatosCelda[filas * colm];
 
     cellSize = std::min(
@@ -19,62 +17,107 @@ MapRender::MapRender(Map& mapa, Graph& grafo, int offsetX, int offsetY, int area
     );
 
     anchoMapa = cellSize * grafo.getCols();
-    altoMapa = cellSize * grafo.getRows();
-                    //offset inicial sin ajuste para centrar el mapa
-    //resultado offset que contempla el debelance resultante de los pixeles sobrantes
-    this->offsetX = offsetX + (areaX - anchoMapa)/ 2;
-    this->offsetY = offsetY + (areaY - altoMapa)/ 2;
+    altoMapa  = cellSize * grafo.getRows();
+
+    this->offsetX = offsetX + (areaX - anchoMapa) / 2;
+    this->offsetY = offsetY + (areaY - altoMapa)  / 2;
+
+    cargarTexturas();
     construirMapa();
 }
 
+MapRender::~MapRender() {
+    delete[] celda;
+}
 
-MapRender::~MapRender(){ delete[] celda;}
+// ─────────────────────────────────────────────────────────────────────────────
+// Carga las texturas desde Interfaz/Sprites/
+// La ruta es relativa al ejecutable (cmake-build-debug/)
+// ─────────────────────────────────────────────────────────────────────────────
+void MapRender::cargarTexturas() {
+    texturasCargadas = true;
 
-sf::Color MapRender::getColor(int peso)
-{
-    switch(peso) {
-        case -1: return sf::Color(38, 38, 38);
-        case  1: return sf::Color(135, 161, 88);
-        case  2: return sf::Color(88, 65, 28);
-        case  5: return sf::Color(28, 65, 105);
-        default: return sf::Color::White;
+    //Ruta texturas
+    const std::string base = "Sprites/";
+
+    if (!texCesped.loadFromFile(base + "Cesped.png")) {
+        std::cerr << "[MapRender] No se pudo cargar Cesped.png\n";
+        texturasCargadas = false;
+    }
+    if (!texBarro.loadFromFile(base + "Barro.png")) {
+        std::cerr << "[MapRender] No se pudo cargar Barro.png\n";
+        texturasCargadas = false;
+    }
+    if (!texAgua.loadFromFile(base + "Agua.png")) {
+        std::cerr << "[MapRender] No se pudo cargar Agua.png\n";
+        texturasCargadas = false;
+    }
+    if (!texMontain.loadFromFile(base + "Montain.png")) {
+        std::cerr << "[MapRender] No se pudo cargar Montain.png\n";
+        texturasCargadas = false;
     }
 }
 
-sf::Vector2i MapRender::obtenerCelda(int px, int py)
-{
-    int fila = (py - offsetY)/cellSize;
-    int columna = (px - offsetX)/cellSize;
-    return sf::Vector2i(columna, fila);
+// ─────────────────────────────────────────────────────────────────────────────
+// Devuelve la textura correspondiente al peso
+// ─────────────────────────────────────────────────────────────────────────────
+sf::Texture& MapRender::getTextura(int peso) {
+    switch (peso) {
+        case  1: return texCesped;
+        case  2: return texBarro;
+        case  5: return texAgua;
+        case -1: return texMontain;
+        default: return texCesped;   // fallback
+    }
 }
 
-sf::Vector2f MapRender::obtenerCentro(int fila, int colm)
-{
-    int px = offsetX + colm * cellSize + (cellSize / 2);
-    int py = offsetY + fila * cellSize + (cellSize / 2);
-    return sf::Vector2f(px, py);
-}
-
+// ─────────────────────────────────────────────────────────────────────────────
+// Construye el array de sprites, uno por celda
+// ─────────────────────────────────────────────────────────────────────────────
 void MapRender::construirMapa() {
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < colm; j++) {
-            int cel = i * colm + j;
+            int cel  = i * colm + j;
             int nodo = grafo.getNodo(i, j);
             int peso = mapa.getPeso(nodo);
 
             float x = offsetX + j * cellSize;
             float y = offsetY + i * cellSize;
 
-            celda[cel].base.setSize(sf::Vector2f(cellSize, cellSize));
-            celda[cel].base.setPosition(sf::Vector2f(x, y));
-            celda[cel].base.setFillColor(getColor(peso));
+            sf::Texture& tex = getTextura(peso);
+
+            // Calcula la escala para que el sprite llene exactamente la celda
+            float scaleX = (float)cellSize / tex.getSize().x;
+            float scaleY = (float)cellSize / tex.getSize().y;
+
+            celda[cel].sprite.setTexture(tex);
+            celda[cel].sprite.setScale(scaleX, scaleY);
+            celda[cel].sprite.setPosition(x, y);
             celda[cel].seleccionado = false;
         }
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilidades
+// ─────────────────────────────────────────────────────────────────────────────
+sf::Vector2i MapRender::obtenerCelda(int px, int py) {
+    int fila    = (py - offsetY) / cellSize;
+    int columna = (px - offsetX) / cellSize;
+    return sf::Vector2i(columna, fila);
+}
+
+sf::Vector2f MapRender::obtenerCentro(int fila, int colm) {
+    int px = offsetX + colm * cellSize + (cellSize / 2);
+    int py = offsetY + fila * cellSize + (cellSize / 2);
+    return sf::Vector2f(px, py);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dibujo
+// ─────────────────────────────────────────────────────────────────────────────
 void MapRender::dibujar(sf::RenderWindow& ventana) {
     for (int i = 0; i < filas * colm; i++) {
-        ventana.draw(celda[i].base);
+        ventana.draw(celda[i].sprite);
     }
 }

@@ -50,3 +50,5 @@ add_custom_command(TARGET TankAttack POST_BUILD
         "${CMAKE_BINARY_DIR}/_deps/sfml-build/lib/sfml-system-d-2.dll"
         "${CMAKE_BINARY_DIR}"
 )
+file(COPY ${CMAKE_SOURCE_DIR}/Interfaz/Sprites
+        DESTINATION ${CMAKE_BINARY_DIR})
