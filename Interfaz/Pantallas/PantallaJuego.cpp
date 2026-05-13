@@ -19,6 +19,7 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
     construirAreaMapa();
     construirPanelInferior();
     construirMapa();
+    construirTanques();
     //construirPanelPowerUps();
 
     botonMenu = new Boton(
@@ -44,6 +45,8 @@ PantallaJuego::~PantallaJuego() {
     delete mapRender;
     delete mapa;
     delete grafo;
+    for (int i = 0; i < 4; i++) delete tanques[i];
+    delete tankRenderer;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -149,6 +152,31 @@ void PantallaJuego::construirMapa()
         alto - ALTO_PANEL_SUP - ALTO_PANEL_INF - MARGEN * 2
     );
 };
+
+void PantallaJuego::construirTanques() {
+    int cols = grafo->getCols();
+    int rows = grafo->getRows();
+
+    int c0, f0, c1, f1, c2, f2, c3, f3;
+
+    mapRender->encontrarPosLibre(1,        1,            true,  c0, f0);
+    mapRender->encontrarPosLibre(1,        rows / 2,     true,  c1, f1);
+    mapRender->encontrarPosLibre(cols - 2, 1,            false, c2, f2);
+    mapRender->encontrarPosLibre(cols - 2, rows / 2,     false, c3, f3);
+
+    tanques[0] = new tankBFS     (c0, f0, 100, Equipo::JUGADOR1, Color::ROJO);
+    tanques[1] = new tankBFS     (c1, f1, 100, Equipo::JUGADOR1, Color::AZUL);
+    tanques[2] = new tankDijkstra(c2, f2, 100, Equipo::JUGADOR2, Color::AMARILLO);
+    tanques[3] = new tankDijkstra(c3, f3, 100, Equipo::JUGADOR2, Color::CELESTE);
+
+    tanques[0]->setDireccion(Direccion::ESTE);
+    tanques[1]->setDireccion(Direccion::ESTE);
+    tanques[2]->setDireccion(Direccion::OESTE);
+    tanques[3]->setDireccion(Direccion::OESTE);
+
+    tankRenderer = new TankRenderer(*mapRender);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Panel inferior
 // ─────────────────────────────────────────────────────────────────────────────
@@ -303,6 +331,7 @@ void PantallaJuego::dibujarAreaMapa(sf::RenderWindow& v) {
     v.draw(bordeMapa);
     v.draw(areaMapaFondo);
     mapRender->dibujar(v);
+    tankRenderer->dibujarTanques(v, tanques, 4);
 }
 
 void PantallaJuego::dibujarPanelInferior(sf::RenderWindow& v) {

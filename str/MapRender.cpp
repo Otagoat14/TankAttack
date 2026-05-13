@@ -101,6 +101,8 @@ void MapRender::construirMapa() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Utilidades
 // ─────────────────────────────────────────────────────────────────────────────
+float const MapRender::getCellSize(){return cellSize;}
+
 sf::Vector2i MapRender::obtenerCelda(int px, int py) {
     int fila    = (py - offsetY) / cellSize;
     int columna = (px - offsetX) / cellSize;
@@ -113,6 +115,26 @@ sf::Vector2f MapRender::obtenerCentro(int fila, int colm) {
     return sf::Vector2f(px, py);
 }
 
+bool MapRender::encontrarPosLibre(int colInicio, int filaInicio, bool desdeIzq, int& colResult, int& filaResult) {
+    for (int f = filaInicio; f < filas; f++) {
+        if (desdeIzq) {
+            for (int c = colInicio; c < colInicio + 3; c++) {
+                int nodo = grafo.getNodo(f, c);
+                if (mapa.getPeso(nodo) != -1) {
+                    colResult = c; filaResult = f; return true;
+                }
+            }
+        } else {
+            for (int c = colInicio; c > colInicio - 3; c--) {
+                int nodo = grafo.getNodo(f, c);
+                if (mapa.getPeso(nodo) != -1) {
+                    colResult = c; filaResult = f; return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // Dibujo
 // ─────────────────────────────────────────────────────────────────────────────
@@ -120,4 +142,4 @@ void MapRender::dibujar(sf::RenderWindow& ventana) {
     for (int i = 0; i < filas * colm; i++) {
         ventana.draw(celda[i].sprite);
     }
-}
+};

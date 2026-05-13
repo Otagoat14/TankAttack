@@ -27,6 +27,7 @@ add_executable(TankAttack
         Interfaz/UI/BarraVida.cpp
         Interfaz/Pantallas/PantallaJuego.h
         Interfaz/Pantallas/PantallaJuego.cpp
+        Personajes/Tanques/TankRenderer.cpp
 )
 
 target_link_libraries(TankAttack
@@ -50,5 +51,5 @@ add_custom_command(TARGET TankAttack POST_BUILD
         "${CMAKE_BINARY_DIR}/_deps/sfml-build/lib/sfml-system-d-2.dll"
         "${CMAKE_BINARY_DIR}"
 )
-file(COPY ${CMAKE_SOURCE_DIR}/Interfaz/Sprites
+file(COPY ${CMAKE_SOURCE_DIR}/Recursos/Sprites
         DESTINATION ${CMAKE_BINARY_DIR})

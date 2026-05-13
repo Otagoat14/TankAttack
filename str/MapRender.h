@@ -42,9 +42,12 @@ public:
               int areaW, int areaH);
     ~MapRender();
 
+    float const getCellSize();
+
     sf::Vector2i obtenerCelda(int px, int py);
     sf::Vector2f obtenerCentro(int fila, int colm);
     void dibujar(sf::RenderWindow& ventana);
+    bool encontrarPosLibre(int colInicio, int filaInicio, bool desdeIzq, int& colResult, int& filaResult);
 };
 
 #endif

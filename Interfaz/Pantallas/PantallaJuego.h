@@ -9,6 +9,7 @@
 #include "../UI/BarraVida.h"
 #include "../UI/UIManager.h"
 #include "C:/Datos 2/TankAttack//str/MapRender.h"
+#include "C:\Datos 2\TankAttack\Personajes\Tanques\TankRenderer.h"
 
 using namespace std;
 
@@ -19,6 +20,10 @@ class PantallaJuego {
     Graph* grafo;
     Map* mapa;
     MapRender* mapRender;
+
+    //Necesarias para dibujo de tanques
+    Tank*         tanques[4];
+    TankRenderer* tankRenderer;
 
     // ── Fondo general ──
     sf::RectangleShape fondoGeneral;
@@ -74,6 +79,8 @@ class PantallaJuego {
 
     //Costruir mapa
     void construirMapa();
+    //Dibujar tanques en mapa
+    void construirTanques();
 
 public:
     PantallaJuego(int ancho, int alto, function<void()> onMenuPrincipal);

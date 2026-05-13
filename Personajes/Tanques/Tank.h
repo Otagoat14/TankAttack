@@ -10,6 +10,7 @@ using namespace std;
 
 enum class Color { AZUL, CELESTE, ROJO, AMARILLO };
 enum class Equipo { JUGADOR1, JUGADOR2 };
+enum class Direccion { NORTE, SUR, ESTE, OESTE };
 
 inline string colorATexto(Color color) {
     switch(color) {
@@ -27,6 +28,7 @@ class Tank {
     int vida;
     const Equipo equipo;
     const Color color;
+    Direccion direccion;
 
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
@@ -39,9 +41,11 @@ public:
     int getVida() const;
     Color getColor() const;
     Equipo getEquipo() const;
+    Direccion getDireccion();
     bool estaVivo() const;
     void recibirDano(int danoRecibido);
     void setPosition(int newX, int newY);
+    void setDireccion(Direccion dir);
     bool puedeMoverse(int nx, int ny, const Graph& grafo);
     void movimientoAleatorio(int destinoX, int destinoY, Graph& grafo);
 

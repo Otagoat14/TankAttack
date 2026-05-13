@@ -26,6 +26,7 @@ int Tank::getY() const { return y; }
 int Tank::getVida() const { return vida; }
 Color Tank::getColor() const { return color; }
 Equipo Tank::getEquipo() const { return equipo; }
+Direccion Tank::getDireccion() { return direccion; }
 bool Tank::estaVivo() const { return vida > 0; }
 
 void Tank::recibirDano(int danoRecibido) {
@@ -34,9 +35,24 @@ void Tank::recibirDano(int danoRecibido) {
 }
 
 void Tank::setPosition(int newX, int newY) {
+    if (newX != x)
+    {
+        if (newX < x)
+        {
+            direccion = Direccion::ESTE;
+        } else { direccion = Direccion::OESTE; }
+    } else
+    {
+        if (newY < y)
+        {
+            direccion = Direccion::SUR;
+        } else { direccion = Direccion::NORTE; }
+    }
     x = newX;
     y = newY;
 }
+
+void Tank::setDireccion(Direccion dir) { direccion = dir; }
 
 bool Tank::puedeMoverse(int nx, int ny, const Graph& grafo) {
     return grafo.esPasable(ny, nx);
