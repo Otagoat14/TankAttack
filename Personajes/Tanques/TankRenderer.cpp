@@ -33,10 +33,10 @@ int TankRenderer::getColumna(Direccion dir)
 {
     switch (dir)
     {
-        case Direccion::NORTE : return 0;
-        case Direccion::SUR : return 1;
-        case Direccion::OESTE : return 2;
-        case Direccion::ESTE: return 3;
+        case Direccion::SUR : return 0;
+        case Direccion::NORTE : return 1;
+        case Direccion::ESTE : return 2;
+        case Direccion::OESTE: return 3;
         default: return 0;
     }
 };

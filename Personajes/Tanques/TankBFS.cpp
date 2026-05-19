@@ -17,7 +17,7 @@ void tankBFS::moverse(int nx, int ny, Graph& grafo, Map& map) {
         return;
     }
 
-    moverPorCeldas(camino, grafo);
+    iniciarMovimiento(new Camino(camino));
 }
 
 Camino tankBFS::BFS(Graph& grafo, Posicion inicio, Posicion destino) {

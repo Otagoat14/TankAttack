@@ -170,10 +170,10 @@ void PantallaJuego::construirTanques() {
     tanques[2] = new tankDijkstra(c2, f2, 100, Equipo::JUGADOR2, Color::AMARILLO);
     tanques[3] = new tankDijkstra(c3, f3, 100, Equipo::JUGADOR2, Color::CELESTE);
 
-    tanques[0]->setDireccion(Direccion::ESTE);
-    tanques[1]->setDireccion(Direccion::ESTE);
-    tanques[2]->setDireccion(Direccion::OESTE);
-    tanques[3]->setDireccion(Direccion::OESTE);
+    tanques[0]->setDireccion(Direccion::OESTE);
+    tanques[1]->setDireccion(Direccion::OESTE);
+    tanques[2]->setDireccion(Direccion::ESTE);
+    tanques[3]->setDireccion(Direccion::ESTE);
 
     tankRenderer = new TankRenderer(*mapRender);
 }
@@ -337,6 +337,12 @@ void PantallaJuego::manejarClick(int col, int row)
 
 void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     botonMenu->actualizar(mousePos);
+
+    //Manntiene constantemente los tanques siendo actualizados
+    for (int i = 0; i < 4; i++) {
+        if (tanques[i] != nullptr)
+            tanques[i]->actualizar(dt);
+    }
     // La lógica del juego (tiempo, turno, movimiento, etc.) se añade aquí después
 }
 

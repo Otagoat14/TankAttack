@@ -29,6 +29,11 @@ class Tank {
     const Equipo equipo;
     const Color color;
     Direccion direccion;
+    NodoCamino* nodoActual;
+    Camino* rutaPendiente;
+    float tiempoAcumulado;   //Almacena el tiempo transcurrido desde el ultimo movimiento
+    float tiempoMovimiento;  // segundos entre cada paso
+    bool enMovimiento;
 
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
@@ -48,8 +53,11 @@ public:
     void setDireccion(Direccion dir);
     bool puedeMoverse(int nx, int ny, const Graph& grafo);
     void movimientoAleatorio(int destinoX, int destinoY, Graph& grafo);
+    void iniciarMovimiento(Camino* camino);  // recibe la ruta
+    void actualizar(float dt);               // avanza un paso si pasó el tiempo, dt = delta time de main
+    bool estaEnMovimiento() const;
 
-    virtual ~Tank() = default;
+    ~Tank();
 
 protected:
     void moverPorCeldas(const Camino& camino, Graph& grafo);

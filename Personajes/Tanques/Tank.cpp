@@ -5,7 +5,14 @@
 
 using namespace std;
 
-Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), equipo(equipo), color(color) {}
+Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), equipo(equipo), color(color)
+{
+    rutaPendiente = nullptr;
+    tiempoAcumulado = 0;
+    tiempoMovimiento = 0.15;
+    enMovimiento = false;
+    nodoActual = nullptr;
+}
 
 void Tank::disparar(int destinoX, int destinoY, Graph& grafo, Tank** tanques, int numTanques) {
 
@@ -164,4 +171,41 @@ Camino Tank::reconstruirCamino(Graph& grafo, int* padre, int nodoDestino) {
 
     delete[] ruta;
     return camino;
+}
+
+void Tank::iniciarMovimiento(Camino* camino)
+{
+    tiempoAcumulado = 0;
+    enMovimiento = true;
+    //Eliminamos la ruta anterior
+    delete rutaPendiente;
+    rutaPendiente = camino;
+    nodoActual = camino->getCabeza();
+    if (nodoActual != nullptr)
+        nodoActual = nodoActual->siguiente;  // saltás posición actual
+    tiempoAcumulado = 0;
+    enMovimiento = true;
+
+}
+
+void Tank::actualizar(float dt)
+{
+    if (enMovimiento)
+    {
+        tiempoAcumulado += dt;
+        cout << "Pos: x=" << x << " y=" << y << endl;
+        if (tiempoAcumulado >= tiempoMovimiento)
+        {
+            setPosition(nodoActual->x, nodoActual->y);
+            nodoActual = nodoActual->siguiente;
+            tiempoAcumulado = 0;
+
+            if (nodoActual == nullptr) enMovimiento = false;
+        }
+    }
+}
+
+Tank::~Tank()
+{
+    delete rutaPendiente;
 }
