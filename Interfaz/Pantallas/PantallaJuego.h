@@ -16,6 +16,10 @@ using namespace std;
 class PantallaJuego {
     int ancho, alto;
 
+    //Manejo de tanques
+    int tanqueSeleccionado;
+    void manejarClick(int col, int row);
+
     //Necesarias para el dibujo del mapa
     Graph* grafo;
     Map* mapa;

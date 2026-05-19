@@ -14,6 +14,7 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
                                function<void()> onMenuPrincipal)
     : ancho(ancho), alto(alto)
 {
+    tanqueSeleccionado = -1;
     construirFondo();
     construirPanelSuperior();
     construirAreaMapa();
@@ -308,7 +309,31 @@ void PantallaJuego::construirPanelPowerUps() {
 void PantallaJuego::manejarEvento(sf::Event& evento,
                                    sf::Vector2i mousePos) {
     botonMenu->manejarEvento(evento, mousePos);
+    if (evento.type == sf::Event::MouseButtonPressed) {
+        if (evento.mouseButton.button == sf::Mouse::Left) {
+            sf::Vector2i celda = mapRender->obtenerCelda(mousePos.x, mousePos.y);
+            manejarClick(celda.x, celda.y);
+        }
+    }
 }
+
+void PantallaJuego::manejarClick(int col, int row)
+{
+    if (tanqueSeleccionado == -1)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if(tanques[i]->getX() == col  &&  tanques[i]->getY() == row)
+            {
+                tanqueSeleccionado = i;
+            }
+        }
+    } else {
+        tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
+        tanqueSeleccionado = -1;
+    }
+}
+
 
 void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     botonMenu->actualizar(mousePos);
