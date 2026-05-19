@@ -8,8 +8,8 @@
 #include "../UI/Texto.h"
 #include "../UI/BarraVida.h"
 #include "../UI/UIManager.h"
-#include "C:/Datos 2/TankAttack//str/MapRender.h"
-#include "C:\Datos 2\TankAttack\Personajes\Tanques\TankRenderer.h"
+#include "../../str/MapRender.h"
+#include "../../Personajes/Tanques/TankRenderer.h"
 
 using namespace std;
 

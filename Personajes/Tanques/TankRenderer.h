@@ -8,7 +8,7 @@
 #include "Tank.h"
 #include "TankBFS.h"
 #include "TankDijkstra.h"
-#include "C:\Datos 2\TankAttack\str\MapRender.h"
+#include "../../str/MapRender.h"
 #include "SFML/Graphics/Rect.hpp"
 
 int inline spriteAlto = 189;

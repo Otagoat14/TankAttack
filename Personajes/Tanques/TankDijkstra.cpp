@@ -18,7 +18,7 @@ void tankDijkstra::moverse(int nx, int ny, Graph& grafo, Map& map) {
         return;
     }
 
-    moverPorCeldas(camino, grafo);
+    iniciarMovimiento(new Camino(camino));
 }
 
 Camino tankDijkstra::Dijkstra(Graph& grafo, Map& map, Posicion inicio, Posicion destino) {
