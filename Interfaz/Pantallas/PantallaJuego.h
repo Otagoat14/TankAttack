@@ -10,6 +10,8 @@
 #include "../UI/UIManager.h"
 #include "../../str/MapRender.h"
 #include "../../Personajes/Tanques/TankRenderer.h"
+#include "../../Personajes/Balas/Bala.h"
+
 
 using namespace std;
 
@@ -86,11 +88,15 @@ class PantallaJuego {
     //Dibujar tanques en mapa
     void construirTanques();
 
+
+    Bala* balaActiva;
+
 public:
     PantallaJuego(int ancho, int alto, function<void()> onMenuPrincipal);
     ~PantallaJuego();
 
     void manejarEvento(sf::Event& evento, sf::Vector2i mousePos);
+    void manejarDisparo(int col, int row);
     void actualizar(float dt, sf::Vector2i mousePos);
     void dibujar(sf::RenderWindow& ventana);
 };

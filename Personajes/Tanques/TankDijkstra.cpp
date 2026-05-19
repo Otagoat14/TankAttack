@@ -8,17 +8,32 @@ tankDijkstra::tankDijkstra(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
 void tankDijkstra::moverse(int nx, int ny, Graph& grafo, Map& map) {
-    Posicion inicio  = {getY(), getX()};
-    Posicion destino = {ny, nx};
+    // 80% Dijkstra, 20% aleatorio
+    int decision = rand() % 100;
 
-    Camino camino = Dijkstra(grafo, map, inicio, destino);
+    if (decision < 80) {
+        // Dijkstra
+        Posicion inicio  = {getY(), getX()};
+        Posicion destino = {ny, nx};
+        Camino camino = Dijkstra(grafo, map, inicio, destino);
 
-    if (camino.empty()) {
-        cout << "No hay camino al destino" << endl;
-        return;
+        if (camino.empty()) {
+            cout << "Dijkstra: No hay camino" << endl;
+            return;
+        }
+        iniciarMovimiento(new Camino(camino));
+
+    } else {
+        // Movimiento aleatorio
+        Camino* camino = new Camino(
+            celdаsLineaVista(getX(), getY(), nx, ny, grafo)
+        );
+        if (camino->empty()) {
+            delete camino;
+            return;
+        }
+        iniciarMovimiento(camino);
     }
-
-    iniciarMovimiento(new Camino(camino));
 }
 
 Camino tankDijkstra::Dijkstra(Graph& grafo, Map& map, Posicion inicio, Posicion destino) {

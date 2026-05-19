@@ -21,6 +21,7 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
     construirPanelInferior();
     construirMapa();
     construirTanques();
+    balaActiva = nullptr;
     //construirPanelPowerUps();
 
     botonMenu = new Boton(
@@ -48,6 +49,7 @@ PantallaJuego::~PantallaJuego() {
     delete grafo;
     for (int i = 0; i < 4; i++) delete tanques[i];
     delete tankRenderer;
+    delete balaActiva;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -309,10 +311,19 @@ void PantallaJuego::construirPanelPowerUps() {
 void PantallaJuego::manejarEvento(sf::Event& evento,
                                    sf::Vector2i mousePos) {
     botonMenu->manejarEvento(evento, mousePos);
+
     if (evento.type == sf::Event::MouseButtonPressed) {
+
+        sf::Vector2i celda = mapRender->obtenerCelda(
+            mousePos.x, mousePos.y
+        );
+
         if (evento.mouseButton.button == sf::Mouse::Left) {
-            sf::Vector2i celda = mapRender->obtenerCelda(mousePos.x, mousePos.y);
             manejarClick(celda.x, celda.y);
+        }
+
+        if (evento.mouseButton.button == sf::Mouse::Right) {
+            manejarDisparo(celda.x, celda.y);
         }
     }
 }
@@ -333,17 +344,31 @@ void PantallaJuego::manejarClick(int col, int row)
         tanqueSeleccionado = -1;
     }
 }
+void PantallaJuego::manejarDisparo(int col, int row) {
+    if (tanqueSeleccionado == -1 || balaActiva != nullptr) return;
 
+    // El tanque crea la bala
+    balaActiva = tanques[tanqueSeleccionado]->disparar(col, row);
+    tanqueSeleccionado = -1;
+}
 
 void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     botonMenu->actualizar(mousePos);
 
-    //Manntiene constantemente los tanques siendo actualizados
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
         if (tanques[i] != nullptr)
             tanques[i]->actualizar(dt);
+
+    // Actualizar bala si existe
+    if (balaActiva != nullptr) {
+        balaActiva->actualizar(dt, *grafo, tanques, 4);
+
+        // Eliminar si ya no está activa
+        if (!balaActiva->estaActiva()) {
+            delete balaActiva;
+            balaActiva = nullptr;
+        }
     }
-    // La lógica del juego (tiempo, turno, movimiento, etc.) se añade aquí después
 }
 
 // ── Dibujo por secciones ────────────────────────────────────────────────────
@@ -363,6 +388,20 @@ void PantallaJuego::dibujarAreaMapa(sf::RenderWindow& v) {
     v.draw(areaMapaFondo);
     mapRender->dibujar(v);
     tankRenderer->dibujarTanques(v, tanques, 4);
+
+    // Dibujar bala si existe
+    if (balaActiva != nullptr) {
+        sf::Vector2f pos = mapRender->obtenerCentro(
+            balaActiva->getY(), balaActiva->getX()
+        );
+        sf::CircleShape circulo(4);
+        circulo.setOrigin(4, 4);
+        circulo.setPosition(pos);
+        circulo.setFillColor(sf::Color(255, 220, 50));
+        circulo.setOutlineColor(sf::Color(200, 100, 0));
+        circulo.setOutlineThickness(1);
+        v.draw(circulo);
+    }
 }
 
 void PantallaJuego::dibujarPanelInferior(sf::RenderWindow& v) {

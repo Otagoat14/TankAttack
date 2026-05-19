@@ -7,17 +7,31 @@ tankBFS::tankBFS(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
 void tankBFS::moverse(int nx, int ny, Graph& grafo, Map& map) {
-    Posicion inicio  = {getY(), getX()};
-    Posicion destino = {ny, nx};
+    // 50% BFS, 50% aleatorio
+    int decision = rand() % 100;
 
-    Camino camino = BFS(grafo, inicio, destino);
+    if (decision < 50) {
+        // BFS
+        Posicion inicio  = {getY(), getX()};
+        Posicion destino = {ny, nx};
+        Camino camino = BFS(grafo, inicio, destino);
 
-    if (camino.empty()) {
-        cout << "No hay camino al destino" << endl;
-        return;
+        if (camino.empty()) {
+            cout << "BFS: No hay camino" << endl;
+            return;
+        }
+        iniciarMovimiento(new Camino(camino));
+
+    } else {
+        Camino* camino = new Camino(
+            celdаsLineaVista(getX(), getY(), nx, ny, grafo)
+        );
+        if (camino->empty()) {
+            delete camino;
+            return;
+        }
+        iniciarMovimiento(camino);
     }
-
-    iniciarMovimiento(new Camino(camino));
 }
 
 Camino tankBFS::BFS(Graph& grafo, Posicion inicio, Posicion destino) {

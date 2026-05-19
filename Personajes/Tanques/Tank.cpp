@@ -14,18 +14,8 @@ Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vid
     nodoActual = nullptr;
 }
 
-void Tank::disparar(int destinoX, int destinoY, Graph& grafo, Tank** tanques, int numTanques) {
-
-    Bala bala(getX(), getY(), destinoX, destinoY, this);
-
-    while (bala.estaActiva()) {
-        bala.mover(grafo);
-
-        Tank* golpeado = bala.verificarColision(tanques, numTanques);
-        if (golpeado != nullptr) {
-            bala.aplicarDano(golpeado);
-        }
-    }
+Bala* Tank::disparar(int destinoX, int destinoY) {
+    return new Bala(getX(), getY(), destinoX, destinoY, this);
 }
 
 int Tank::getX() const { return x; }
@@ -190,6 +180,10 @@ void Tank::iniciarMovimiento(Camino* camino)
 
 void Tank::actualizar(float dt)
 {
+
+    if (!enMovimiento || nodoActual == nullptr) {
+        return;
+    }
     if (enMovimiento)
     {
         tiempoAcumulado += dt;

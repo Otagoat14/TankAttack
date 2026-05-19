@@ -5,6 +5,7 @@
 #include "../../Utils.h"
 #include "../../str/Grafo.h"
 #include "../../str/Map.h"
+#include "../Balas/Bala.h"
 
 using namespace std;
 
@@ -39,7 +40,8 @@ public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
     virtual void moverse(int nx, int ny, Graph& grafo, Map& map ) = 0;
-    void disparar(int destinoX, int destinoY, Graph& grafo, Tank** tanques, int numTanques);
+    // Crea y retorna una bala lista para ser animada
+    Bala* disparar(int destinoX, int destinoY);
 
     int getX() const;
     int getY() const;
