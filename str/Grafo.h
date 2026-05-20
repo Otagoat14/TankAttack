@@ -56,6 +56,11 @@ public:
     int getRows() const { return rows; }
 
     void reset();
+
+    //Bloquea el acceso a un nodo
+    void bloquearNodo(int nodo, int* vecinosGuardados, int& numGuardados);
+    //Desbloquea el acceso a un nodo
+    void desbloquearNodo(int nodo, int* vecinosGuardados, int numGuardados);
 };
 
 #endif //TANKATTACK_GRAFO_H

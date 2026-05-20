@@ -107,6 +107,20 @@ void Graph::reset() {
     }
 }
 
+void Graph::bloquearNodo(int node, int* vecinosGuardados, int& numGuardados) {
+    numGuardados = 0;
+    getVecinos(node, vecinosGuardados, numGuardados);
+    for (int i = 0; i < numGuardados; i++) {
+        delVecinos(node, vecinosGuardados[i]);
+    }
+}
+
+void Graph::desbloquearNodo(int node, int* vecinosGuardados, int numGuardados) {
+    for (int i = 0; i < numGuardados; i++) {
+        addVecinos(node, vecinosGuardados[i]);
+    }
+}
+
 //Destructor
 Graph::~Graph() {
     delete[] matrix;

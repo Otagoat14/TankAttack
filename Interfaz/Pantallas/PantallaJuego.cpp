@@ -344,9 +344,32 @@ void PantallaJuego::manejarClick(int col, int row)
     } else {
         int jugadorDelTanque = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
         if (gm->puedeActuar(jugadorDelTanque)) {
+            // Bloquear celdas de otros tanques
+            int vecinosGuardados[3][4];
+            int numGuardados[3] = {0, 0, 0};
+            int idx = 0;
+
+            for (int i = 0; i < 4; i++) {
+                if (i != tanqueSeleccionado) {
+                    int nodo = grafo->getNodo(tanques[i]->getY(), tanques[i]->getX());
+                    grafo->bloquearNodo(nodo, vecinosGuardados[idx], numGuardados[idx]);
+                    idx++;
+                }
+            }
+
             tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
             gm->registrarAccion();
             gm->siguienteTurno();
+
+            idx = 0;
+            for (int i = 0; i < 4; i++) {
+                if (i != tanqueSeleccionado) {
+                    int nodo = grafo->getNodo(tanques[i]->getY(), tanques[i]->getX());
+                    grafo->desbloquearNodo(nodo, vecinosGuardados[idx], numGuardados[idx]);
+                    idx++;
+                }
+            }
+
         }
         tanqueSeleccionado = -1;
     }
