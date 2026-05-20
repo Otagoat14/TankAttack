@@ -11,12 +11,16 @@
 #include "../../str/MapRender.h"
 #include "../../Personajes/Tanques/TankRenderer.h"
 #include "../../Personajes/Balas/Bala.h"
+#include "../../str/gameManager.h"
 
 
 using namespace std;
 
 class PantallaJuego {
     int ancho, alto;
+
+    //
+    gameManager* gm;
 
     //Manejo de tanques
     int tanqueSeleccionado;

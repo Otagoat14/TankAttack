@@ -50,6 +50,7 @@ PantallaJuego::~PantallaJuego() {
     for (int i = 0; i < 4; i++) delete tanques[i];
     delete tankRenderer;
     delete balaActiva;
+    delete gm;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -178,6 +179,7 @@ void PantallaJuego::construirTanques() {
     tanques[3]->setDireccion(Direccion::ESTE);
 
     tankRenderer = new TankRenderer(*mapRender);
+    gm = new gameManager(tanques);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -340,7 +342,12 @@ void PantallaJuego::manejarClick(int col, int row)
             }
         }
     } else {
-        tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
+        int jugadorDelTanque = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
+        if (gm->puedeActuar(jugadorDelTanque)) {
+            tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
+            gm->registrarAccion();
+            gm->siguienteTurno();
+        }
         tanqueSeleccionado = -1;
     }
 }
@@ -350,11 +357,32 @@ void PantallaJuego::manejarDisparo(int col, int row) {
     // El tanque crea la bala
     balaActiva = tanques[tanqueSeleccionado]->disparar(col, row);
     tanqueSeleccionado = -1;
+    gm->registrarAccion();
+    gm->siguienteTurno();
 }
 
 void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     botonMenu->actualizar(mousePos);
+    //Actualizar constrol de tiempo transcurrido
+    gm->actualizar(dt);
+    //Actualizar visualmente el tiempo transcurrido
+    int seg = (int)gm->getTiempoRestante();
+    int min = seg / 60;
+    int s   = seg % 60;
+    // Formatear "MM:SS"
+    string tiempo = (min < 10 ? "0" : "") + to_string(min) + ":" + (s < 10 ? "0" : "") + to_string(s);
+    textoTiempo.setString(tiempo);
 
+    //Actualizar indicador de turno
+    if (gm->getJugadorActivo() == 0) {
+        textoLabelJ1.setFillColor(sf::Color(200, 80, 60));   // activo
+        textoLabelJ2.setFillColor(sf::Color(100, 100, 100)); // inactivo
+    } else {
+        textoLabelJ1.setFillColor(sf::Color(100, 100, 100)); // inactivo
+        textoLabelJ2.setFillColor(sf::Color(60, 160, 200));  // activo
+    }
+
+    //Actualizar deteccion de tanques
     for (int i = 0; i < 4; i++)
         if (tanques[i] != nullptr)
             tanques[i]->actualizar(dt);

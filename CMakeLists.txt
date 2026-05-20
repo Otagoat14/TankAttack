@@ -28,6 +28,7 @@ add_executable(TankAttack
         Interfaz/Pantallas/PantallaJuego.h
         Interfaz/Pantallas/PantallaJuego.cpp
         Personajes/Tanques/TankRenderer.cpp
+        str/gameManager.cpp
 )
 
 target_link_libraries(TankAttack
