@@ -101,6 +101,13 @@ class PantallaJuego {
     sf::Text textoPowerUpJ1;
     sf::Text textoPowerUpJ2;
 
+    // ── Pantalla de fin de juego ──
+    bool juegoTerminado;
+    sf::RectangleShape overlayFin;
+    sf::Text textoResultado;
+    sf::Text textoSubtituloFin;
+    Boton* botonVolverMenu;
+
 
 
 

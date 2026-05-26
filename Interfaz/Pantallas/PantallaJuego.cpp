@@ -46,6 +46,37 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
     textoPowerUpJ2.setCharacterSize(7);
     textoPowerUpJ2.setFillColor(sf::Color(220, 185, 80));
     textoPowerUpJ2.setPosition(ancho / 2.0f + MARGEN, alto - ALTO_PANEL_INF + 80);
+
+    juegoTerminado = false;
+
+    // Overlay semitransparente
+    overlayFin.setSize(sf::Vector2f(ancho, alto));
+    overlayFin.setPosition(0, 0);
+    overlayFin.setFillColor(sf::Color(0, 0, 0, 180));
+
+    // Texto principal resultado
+    textoResultado.setFont(UIManager::instancia().getFuente());
+    textoResultado.setCharacterSize(36);
+    textoResultado.setOutlineThickness(3);
+    textoResultado.setOutlineColor(sf::Color::Black);
+
+    // Subtitulo
+    textoSubtituloFin.setFont(UIManager::instancia().getFuente());
+    textoSubtituloFin.setCharacterSize(12);
+    textoSubtituloFin.setFillColor(UIColores::BLANCO_DESG);
+
+    // Boton volver al menu
+    botonVolverMenu = new Boton(
+        ancho / 2.0f, alto * 0.65f, 300, 50,
+        "> VOLVER AL MENU",
+        onMenuPrincipal,
+        UIColores::PANEL_OSCURO,
+        UIColores::HOVER_SALIR,
+        UIColores::METAL_CLARO,
+        UIColores::ACENTO_ROJO,
+        UIColores::BLANCO_DESG,
+        UIColores::ACENTO_ROJO
+    );
 }
 
 PantallaJuego::~PantallaJuego() {
@@ -61,6 +92,7 @@ PantallaJuego::~PantallaJuego() {
     delete tankRenderer;
     delete balaActiva;
     delete gm;
+    delete botonVolverMenu;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -323,6 +355,12 @@ void PantallaJuego::construirPanelPowerUps() {
 void PantallaJuego::manejarEvento(sf::Event& evento,
                                    sf::Vector2i mousePos) {
     botonMenu->manejarEvento(evento, mousePos);
+
+    if (juegoTerminado) {
+        botonVolverMenu->manejarEvento(evento, mousePos);
+        return;
+    }
+
     if (evento.type == sf::Event::KeyPressed &&
     evento.key.code == sf::Keyboard::LShift) {
         int jugador = gm->getJugadorActivo();
@@ -490,6 +528,52 @@ void PantallaJuego::manejarDisparo(int col, int row) {
 
 void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     botonMenu->actualizar(mousePos);
+
+    if (gm->juegoAcabado() && !juegoTerminado) {
+        juegoTerminado = true;
+        int ganador = gm->getGanador();
+
+        if (ganador == 0) {
+            textoResultado.setString("JUGADOR 1 GANA!");
+            textoResultado.setFillColor(sf::Color(200, 80, 60));
+            textoResultado.setOutlineColor(sf::Color(80, 20, 10));
+        } else {
+            textoResultado.setString("JUGADOR 2 GANA!");
+            textoResultado.setFillColor(sf::Color(60, 160, 200));
+            textoResultado.setOutlineColor(sf::Color(10, 50, 80));
+        }
+
+        // Centrar texto resultado
+        sf::FloatRect b = textoResultado.getLocalBounds();
+        textoResultado.setOrigin(b.left + b.width / 2.f, b.top + b.height / 2.f);
+        textoResultado.setPosition(ancho / 2.f, alto * 0.38f);
+
+        // Subtitulo segun condicion de victoria
+        int vivosJ1 = 0, vivosJ2 = 0;
+        for (int i = 0; i < 4; i++) {
+            if (tanques[i]->estaVivo()) {
+                if (tanques[i]->getEquipo() == Equipo::JUGADOR1) vivosJ1++;
+                else vivosJ2++;
+            }
+        }
+
+        string subtitulo;
+        if (vivosJ1 == 0 || vivosJ2 == 0)
+            subtitulo = "Por eliminacion total";
+        else
+            subtitulo = "Por tanques restantes al acabar el tiempo";
+
+        textoSubtituloFin.setString(subtitulo);
+        sf::FloatRect bs = textoSubtituloFin.getLocalBounds();
+        textoSubtituloFin.setOrigin(bs.left + bs.width / 2.f, bs.top + bs.height / 2.f);
+        textoSubtituloFin.setPosition(ancho / 2.f, alto * 0.50f);
+    }
+
+    // Si el juego termino solo actualizar el boton de volver
+    if (juegoTerminado) {
+        botonVolverMenu->actualizar(mousePos);
+        return;
+    }
     //Actualizar constrol de tiempo transcurrido
     gm->actualizar(dt);
     //Actualizar visualmente el tiempo transcurrido
@@ -650,4 +734,12 @@ void PantallaJuego::dibujar(sf::RenderWindow& ventana) {
     dibujarPanelInferior(ventana);
     dibujarPanelPowerUps(ventana);
     dibujarPanelSuperior(ventana);
+
+    // Overlay de fin de juego encima de todo
+    if (juegoTerminado) {
+        ventana.draw(overlayFin);
+        ventana.draw(textoResultado);
+        ventana.draw(textoSubtituloFin);
+        botonVolverMenu->dibujar(ventana);
+    }
 }
