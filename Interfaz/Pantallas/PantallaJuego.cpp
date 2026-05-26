@@ -357,7 +357,21 @@ void PantallaJuego::manejarClick(int col, int row)
                 }
             }
 
+            // DESPUÉS:
             tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
+
+            // Capturar ruta para visualizarla
+            rutaTanqueVisible.limpiar();
+            rutaBalaVisible.limpiar();
+            Camino* ruta = tanques[tanqueSeleccionado]->getRutaPendiente();
+            if (ruta != nullptr) {
+                NodoCamino* nodo = ruta->getCabeza();
+                while (nodo != nullptr) {
+                    rutaTanqueVisible.agregar(nodo->x, nodo->y);
+                    nodo = nodo->siguiente;
+                }
+            }
+
             gm->registrarAccion();
             gm->siguienteTurno();
 
@@ -377,8 +391,59 @@ void PantallaJuego::manejarClick(int col, int row)
 void PantallaJuego::manejarDisparo(int col, int row) {
     if (tanqueSeleccionado == -1 || balaActiva != nullptr) return;
 
-    // El tanque crea la bala
     balaActiva = tanques[tanqueSeleccionado]->disparar(col, row);
+
+    // Calcular trayectoria completa para visualizarla
+    rutaBalaVisible.limpiar();
+    rutaTanqueVisible.limpiar();
+
+    int bx   = balaActiva->getX();
+    int by   = balaActiva->getY();
+    int dx   = col - bx;
+    int dy   = row - by;
+    int dirX = (dx == 0) ? 0 : (dx > 0 ? 1 : -1);
+    int dirY = (dy == 0) ? 0 : (dy > 0 ? 1 : -1);
+    int rebotes = MAX_REBOTES;
+    int numFilas = grafo->getRows();
+    int numCols  = grafo->getCols();
+
+    for (int paso = 0; paso < 300 && rebotes >= 0; paso++) {
+        int nx = bx + dirX;
+        int ny = by + dirY;
+
+        bool bloqX = (nx < 0 || nx >= numCols  || !grafo->esPasable(by, nx));
+        bool bloqY = (ny < 0 || ny >= numFilas  || !grafo->esPasable(ny, bx));
+
+        if (bloqX || bloqY) {
+            if (rebotes <= 0) break;
+            if (bloqX && bloqY) { dirX = -dirX; dirY = -dirY; }
+            else if (bloqX)       dirX = -dirX;
+            else                  dirY = -dirY;
+            rebotes--;
+            nx = bx + dirX;
+            ny = by + dirY;
+            if (nx < 0 || nx >= numCols || ny < 0 || ny >= numFilas) break;
+            if (!grafo->esPasable(ny, nx)) break;
+        }
+
+        bx = nx;
+        by = ny;
+        rutaBalaVisible.agregar(bx, by);
+
+        // Si toca un tanque, la trayectoria termina ahí
+        bool impacto = false;
+        for (int i = 0; i < 4; i++) {
+            if (tanques[i] != nullptr &&
+                tanques[i]->estaVivo() &&
+                tanques[i]->getX() == bx &&
+                tanques[i]->getY() == by) {
+                impacto = true;
+                break;
+                }
+        }
+        if (impacto) break;
+    }
+
     tanqueSeleccionado = -1;
     gm->registrarAccion();
     gm->siguienteTurno();
@@ -447,6 +512,36 @@ void PantallaJuego::dibujarAreaMapa(sf::RenderWindow& v) {
     v.draw(areaMapaFondo);
     mapRender->dibujar(v);
     tankRenderer->dibujarTanques(v, tanques, 4);
+
+    // Dibujar ruta del tanque (verde semitransparente)
+    NodoRuta* nodoT = rutaTanqueVisible.getCabeza();
+    while (nodoT != nullptr) {
+        sf::Vector2f centro = mapRender->obtenerCentro(nodoT->fila, nodoT->col);
+        float cs = mapRender->getCellSize();
+        sf::RectangleShape celda(sf::Vector2f(cs - 2, cs - 2));
+        celda.setOrigin((cs - 2) / 2.f, (cs - 2) / 2.f);
+        celda.setPosition(centro);
+        celda.setFillColor(sf::Color(80, 200, 80, 90));
+        celda.setOutlineColor(sf::Color(80, 200, 80, 160));
+        celda.setOutlineThickness(1);
+        v.draw(celda);
+        nodoT = nodoT->siguiente;
+    }
+
+    // Dibujar ruta de la bala (amarillo semitransparente)
+    NodoRuta* nodoB = rutaBalaVisible.getCabeza();
+    while (nodoB != nullptr) {
+        sf::Vector2f centro = mapRender->obtenerCentro(nodoB->fila, nodoB->col);
+        float cs = mapRender->getCellSize();
+        sf::RectangleShape celda(sf::Vector2f(cs - 2, cs - 2));
+        celda.setOrigin((cs - 2) / 2.f, (cs - 2) / 2.f);
+        celda.setPosition(centro);
+        celda.setFillColor(sf::Color(255, 220, 50, 90));
+        celda.setOutlineColor(sf::Color(255, 220, 50, 160));
+        celda.setOutlineThickness(1);
+        v.draw(celda);
+        nodoB = nodoB->siguiente;
+    }
 
     // Dibujar bala si existe
     if (balaActiva != nullptr) {

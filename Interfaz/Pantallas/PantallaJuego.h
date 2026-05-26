@@ -12,6 +12,7 @@
 #include "../../Personajes/Tanques/TankRenderer.h"
 #include "../../Personajes/Balas/Bala.h"
 #include "../../str/gameManager.h"
+#include "../../Utils.h"
 
 
 using namespace std;
@@ -74,6 +75,10 @@ class PantallaJuego {
     // ── Botón menú ──
     Boton* botonMenu;
 
+    // ── Rutas visibles ──
+    ListaRuta rutaTanqueVisible;
+    ListaRuta rutaBalaVisible;
+
     // ── Construcción ──
     void construirFondo();
     void construirPanelSuperior();
@@ -91,6 +96,8 @@ class PantallaJuego {
     void construirMapa();
     //Dibujar tanques en mapa
     void construirTanques();
+
+
 
 
     Bala* balaActiva;

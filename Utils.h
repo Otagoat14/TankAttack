@@ -251,4 +251,48 @@ inline Camino celdаsLineaVista(int x0, int y0, int x1, int y1, const Graph& gra
 
     return camino;
 }
+
+
+// ── Lista simple para rutas visibles ──────────────────────────────────────
+struct NodoRuta {
+    int col, fila;
+    NodoRuta* siguiente;
+    NodoRuta(int c, int f) : col(c), fila(f), siguiente(nullptr) {}
+};
+
+class ListaRuta {
+    NodoRuta* cabeza;
+    NodoRuta* cola;
+
+public:
+    ListaRuta() : cabeza(nullptr), cola(nullptr) {}
+
+    ~ListaRuta() { limpiar(); }
+
+    void limpiar() {
+        NodoRuta* actual = cabeza;
+        while (actual != nullptr) {
+            NodoRuta* siguiente = actual->siguiente;
+            delete actual;
+            actual = siguiente;
+        }
+        cabeza = nullptr;
+        cola   = nullptr;
+    }
+
+    void agregar(int col, int fila) {
+        NodoRuta* nuevo = new NodoRuta(col, fila);
+        if (cola == nullptr) {
+            cabeza = nuevo;
+            cola   = nuevo;
+        } else {
+            cola->siguiente = nuevo;
+            cola = nuevo;
+        }
+    }
+
+    NodoRuta* getCabeza() const { return cabeza; }
+    bool vacia() const { return cabeza == nullptr; }
+};
+
 #endif

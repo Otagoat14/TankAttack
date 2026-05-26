@@ -60,6 +60,7 @@ public:
     void iniciarMovimiento(Camino* camino);  // recibe la ruta
     void actualizar(float dt);               // avanza un paso si pasó el tiempo, dt = delta time de main
     bool estaEnMovimiento() const;
+    Camino* getRutaPendiente() const { return rutaPendiente; }
 
     ~Tank();
 
