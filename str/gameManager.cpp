@@ -90,24 +90,24 @@ bool gameManager::aplicarPowerUp(int jugador) {
         case TipoPowerUp::DOBLE_TURNO:
             turnosExtrasRestantes = 2;
             cout << "Power-up: DOBLE TURNO activado" << endl;
+            // Este sí consume el turno porque no requiere acción posterior
+            registrarAccion();
+            siguienteTurno();
             break;
         case TipoPowerUp::PRECISION_MOVIMIENTO:
             precisionMovJ[jugador] = true;
-            cout << "Power-up: PRECISION MOVIMIENTO activado" << endl;
+            cout << "Power-up: PRECISION MOVIMIENTO - ahora mueve un tanque" << endl;
             break;
         case TipoPowerUp::PRECISION_ATAQUE:
             precisionAtaqueJ[jugador] = true;
-            cout << "Power-up: PRECISION ATAQUE activado" << endl;
+            cout << "Power-up: PRECISION ATAQUE - ahora dispara" << endl;
             break;
         case TipoPowerUp::PODER_ATAQUE:
             poderAtaqueJ[jugador] = true;
-            cout << "Power-up: PODER ATAQUE activado" << endl;
+            cout << "Power-up: PODER ATAQUE - ahora dispara" << endl;
             break;
     }
 
-    // Consumir el turno
-    registrarAccion();
-    siguienteTurno();
     return true;
 }
 
@@ -155,9 +155,13 @@ void gameManager::siguienteTurno() {
 
     if (turnosExtrasRestantes > 0) {
         turnosExtrasRestantes--;
-        // El jugador activo se queda igual
         return;
     }
+
+    // Limpiar efectos no usados del jugador que termina su turno
+    precisionMovJ[jugadorActivo]    = false;
+    precisionAtaqueJ[jugadorActivo] = false;
+    poderAtaqueJ[jugadorActivo]     = false;
 
     jugadorActivo = (jugadorActivo == 0) ? 1 : 0;
 }

@@ -410,62 +410,77 @@ void PantallaJuego::manejarClick(int col, int row)
 void PantallaJuego::manejarDisparo(int col, int row) {
     if (tanqueSeleccionado == -1 || balaActiva != nullptr) return;
 
-    int  jugador  = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
-    bool astar    = gm->getPrecisionAtaque(jugador);
-    bool poder    = gm->getPoderAtaque(jugador);
-    balaActiva    = tanques[tanqueSeleccionado]->disparar(col, row, astar, poder);
+    int  jugador = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
+    bool astar   = gm->getPrecisionAtaque(jugador);
+    bool poder   = gm->getPoderAtaque(jugador);
+
+    balaActiva = tanques[tanqueSeleccionado]->disparar(col, row, astar, poder);
     if (astar)  gm->consumirPrecisionAtaque(jugador);
     if (poder)  gm->consumirPoderAtaque(jugador);
 
-    // Calcular trayectoria completa para visualizarla
     rutaBalaVisible.limpiar();
     rutaTanqueVisible.limpiar();
 
-    int bx   = balaActiva->getX();
-    int by   = balaActiva->getY();
-    int dx   = col - bx;
-    int dy   = row - by;
-    int dirX = (dx == 0) ? 0 : (dx > 0 ? 1 : -1);
-    int dirY = (dy == 0) ? 0 : (dy > 0 ? 1 : -1);
-    int rebotes = MAX_REBOTES;
-    int numFilas = grafo->getRows();
-    int numCols  = grafo->getCols();
+    if (astar) {
+        // Visualizar ruta A* real: calcular el camino completo de una vez
+        Posicion inicio  = { balaActiva->getY(), balaActiva->getX() };
+        Posicion destino = { row, col };
+        Camino camino = aStar(*grafo, inicio, destino);
 
-    for (int paso = 0; paso < 300 && rebotes >= 0; paso++) {
-        int nx = bx + dirX;
-        int ny = by + dirY;
-
-        bool bloqX = (nx < 0 || nx >= numCols  || !grafo->esPasable(by, nx));
-        bool bloqY = (ny < 0 || ny >= numFilas  || !grafo->esPasable(ny, bx));
-
-        if (bloqX || bloqY) {
-            if (rebotes <= 0) break;
-            if (bloqX && bloqY) { dirX = -dirX; dirY = -dirY; }
-            else if (bloqX)       dirX = -dirX;
-            else                  dirY = -dirY;
-            rebotes--;
-            nx = bx + dirX;
-            ny = by + dirY;
-            if (nx < 0 || nx >= numCols || ny < 0 || ny >= numFilas) break;
-            if (!grafo->esPasable(ny, nx)) break;
+        NodoCamino* nodo = camino.getCabeza();
+        if (nodo != nullptr) nodo = nodo->siguiente;
+        while (nodo != nullptr) {
+            rutaBalaVisible.agregar(nodo->x, nodo->y);
+            nodo = nodo->siguiente;
         }
 
-        bx = nx;
-        by = ny;
-        rutaBalaVisible.agregar(bx, by);
+    } else {
+        // Visualizar trayectoria de rebotes normal
+        int bx      = balaActiva->getX();
+        int by      = balaActiva->getY();
+        int dx      = col - bx;
+        int dy      = row - by;
+        int dirX    = (dx == 0) ? 0 : (dx > 0 ? 1 : -1);
+        int dirY    = (dy == 0) ? 0 : (dy > 0 ? 1 : -1);
+        int rebotes = MAX_REBOTES;
+        int numFilas = grafo->getRows();
+        int numCols  = grafo->getCols();
 
-        // Si toca un tanque, la trayectoria termina ahí
-        bool impacto = false;
-        for (int i = 0; i < 4; i++) {
-            if (tanques[i] != nullptr &&
-                tanques[i]->estaVivo() &&
-                tanques[i]->getX() == bx &&
-                tanques[i]->getY() == by) {
-                impacto = true;
-                break;
+        for (int paso = 0; paso < 300 && rebotes >= 0; paso++) {
+            int nx = bx + dirX;
+            int ny = by + dirY;
+
+            bool bloqX = (nx < 0 || nx >= numCols  || !grafo->esPasable(by, nx));
+            bool bloqY = (ny < 0 || ny >= numFilas  || !grafo->esPasable(ny, bx));
+
+            if (bloqX || bloqY) {
+                if (rebotes <= 0) break;
+                if (bloqX && bloqY) { dirX = -dirX; dirY = -dirY; }
+                else if (bloqX)       dirX = -dirX;
+                else                  dirY = -dirY;
+                rebotes--;
+                nx = bx + dirX;
+                ny = by + dirY;
+                if (nx < 0 || nx >= numCols || ny < 0 || ny >= numFilas) break;
+                if (!grafo->esPasable(ny, nx)) break;
+            }
+
+            bx = nx;
+            by = ny;
+            rutaBalaVisible.agregar(bx, by);
+
+            bool impacto = false;
+            for (int i = 0; i < 4; i++) {
+                if (tanques[i] != nullptr &&
+                    tanques[i]->estaVivo() &&
+                    tanques[i]->getX() == bx &&
+                    tanques[i]->getY() == by) {
+                    impacto = true;
+                    break;
                 }
+            }
+            if (impacto) break;
         }
-        if (impacto) break;
     }
 
     tanqueSeleccionado = -1;
