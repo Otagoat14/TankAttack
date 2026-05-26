@@ -76,16 +76,13 @@ void Bala::verificarYAplicarDano(Tank** tanques, int numTanques) {
 
 void Bala::aplicarDano(Tank* tanque) {
     if (tanque == nullptr) return;
-
     Color colorTanque = tanque->getColor();
-    int vidaActual    = tanque->getVida();
-
+    int vidaMax       = tanque->getVidaMax();
     int dano;
     if (colorTanque == Color::CELESTE || colorTanque == Color::AZUL)
-        dano = vidaActual * 0.25f;
+        dano = (int)(vidaMax * 0.25f);
     else
-        dano = vidaActual * 0.50f;
-
+        dano = (int)(vidaMax * 0.50f);
     tanque->recibirDano(dano);
     activa = false;
 }

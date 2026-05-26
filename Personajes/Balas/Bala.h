@@ -4,7 +4,7 @@
 #include "../../Utils.h"
 #include "../../str/Grafo.h"
 
-const int MAX_REBOTES = 4;
+const int MAX_REBOTES = 8;
 
 enum class TipoRebote {
     VERTICAL,

@@ -27,6 +27,7 @@ class Tank {
     int x;
     int y;
     int vida;
+    int vidaMax;
     const Equipo equipo;
     const Color color;
     Direccion direccion;
@@ -46,6 +47,7 @@ public:
     int getX() const;
     int getY() const;
     int getVida() const;
+    int getVidaMax() const;
     Color getColor() const;
     Equipo getEquipo() const;
     Direccion getDireccion();

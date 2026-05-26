@@ -406,9 +406,17 @@ void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
     }
 
     //Actualizar deteccion de tanques
-    for (int i = 0; i < 4; i++)
-        if (tanques[i] != nullptr)
+    for (int i = 0; i < 4; i++) {
+        if (tanques[i] != nullptr) {
             tanques[i]->actualizar(dt);
+        }
+    }
+    // Barras de vida J1 (tanques 0 y 1)
+    barraVidaJ1[0]->actualizar(tanques[0]->getVida());
+    barraVidaJ1[1]->actualizar(tanques[1]->getVida());
+    // Barras de vida J2 (tanques 2 y 3)
+    barraVidaJ2[0]->actualizar(tanques[2]->getVida());
+    barraVidaJ2[1]->actualizar(tanques[3]->getVida());
 
     // Actualizar bala si existe
     if (balaActiva != nullptr) {

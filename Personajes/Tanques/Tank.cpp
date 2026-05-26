@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), equipo(equipo), color(color)
+Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), vidaMax(vida), equipo(equipo), color(color)
 {
     rutaPendiente = nullptr;
     tiempoAcumulado = 0;
@@ -21,6 +21,7 @@ Bala* Tank::disparar(int destinoX, int destinoY) {
 int Tank::getX() const { return x; }
 int Tank::getY() const { return y; }
 int Tank::getVida() const { return vida; }
+int Tank::getVidaMax() const { return vidaMax; }
 Color Tank::getColor() const { return color; }
 Equipo Tank::getEquipo() const { return equipo; }
 Direccion Tank::getDireccion() { return direccion; }
