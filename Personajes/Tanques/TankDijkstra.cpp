@@ -7,11 +7,12 @@ using namespace std;
 tankDijkstra::tankDijkstra(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
-void tankDijkstra::moverse(int nx, int ny, Graph& grafo, Map& map) {
+void tankDijkstra::moverse(int nx, int ny, Graph& grafo, Map& map, bool altaPrecision) {
     // 80% Dijkstra, 20% aleatorio
+    int umbral = altaPrecision ? 90 : 80;
     int decision = rand() % 100;
 
-    if (decision < 80) {
+    if (decision < umbral) {
         // Dijkstra
         Posicion inicio  = {getY(), getX()};
         Posicion destino = {ny, nx};

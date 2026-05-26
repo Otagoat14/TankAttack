@@ -40,9 +40,9 @@ class Tank {
 public:
     Tank(int x, int y, int vida, Equipo equipo, Color color);
 
-    virtual void moverse(int nx, int ny, Graph& grafo, Map& map ) = 0;
+    virtual void moverse(int nx, int ny, Graph& grafo, Map& map, bool altaPrecision = false) = 0;
     // Crea y retorna una bala lista para ser animada
-    Bala* disparar(int destinoX, int destinoY);
+    Bala* disparar(int destinoX, int destinoY, bool modoAEstrella = false, bool modoPoder     = false);
 
     int getX() const;
     int getY() const;

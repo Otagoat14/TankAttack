@@ -97,6 +97,10 @@ class PantallaJuego {
     //Dibujar tanques en mapa
     void construirTanques();
 
+    // Power-ups UI
+    sf::Text textoPowerUpJ1;
+    sf::Text textoPowerUpJ2;
+
 
 
 

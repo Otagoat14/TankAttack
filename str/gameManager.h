@@ -1,37 +1,61 @@
-//
-// Created by nacho on 5/19/2026.
-//
-
 #ifndef TANKATTACK_GAMEMANAGER_H
 #define TANKATTACK_GAMEMANAGER_H
+
 #include "../Personajes/Tanques/Tank.h"
+#include "../Utils.h"
 
-
-class gameManager
-{
-    private:
-    Tank** tank;            //Puntero a los tanques pra verficaciones
-    int jugadorActivo;      //Jugador activo
-    bool Action;            //(Variable de control)El jugador ya utilizo la accion de ese turno
+class gameManager {
+private:
+    Tank** tank;
+    int  jugadorActivo;
+    bool Action;
     float tiempoRestante;
-    bool juego;             //El juego esta activo o no
-    int ganador;            // -1 sin ganador definido
+    bool juego;
+    int  ganador;
 
-    public:
+    // ── Power-ups ──
+    Cola<TipoPowerUp> colaJ1;
+    Cola<TipoPowerUp> colaJ2;
 
+    float tiempoProxPowerUp[2];   // cuándo se genera el próximo power-up por jugador
+
+    // Estado de efectos activos
+    int  turnosExtrasRestantes;   // para DOBLE_TURNO
+    bool precisionMovJ[2];        // PRECISION_MOVIMIENTO activa por jugador
+    bool precisionAtaqueJ[2];     // PRECISION_ATAQUE activa por jugador
+    bool poderAtaqueJ[2];         // PODER_ATAQUE activo por jugador
+
+    void generarPowerUpAleatorio(int jugador);
+
+public:
     gameManager(Tank** tanques);
     ~gameManager();
-    void siguienteTurno();          //Pasa de turno
-    void registrarAccion();         //Guarda si un jugador ya realizo una accion
-    int getJugadorActivo();         //Obtiene de quien es el turno
-    bool puedeActuar(int jugador);             //Comprueba que el jugador no alla hecho ninguna accion antes
-    void actualizar(float dt);              //Actualiza el tiempo restnate desopues de cada frame
-    float getTiempoRestante();      //Retorna el tiempo que queda
-    bool juegoAcabado();            //Retorna si el juego termino
-    int getGanador();               //Obtiene al ganador
 
+    void siguienteTurno();
+    void registrarAccion();
+    int  getJugadorActivo();
+    bool puedeActuar(int jugador);
+    void actualizar(float dt);
+    float getTiempoRestante();
+    bool juegoAcabado();
+    int  getGanador();
 
+    // Power-ups
+    bool aplicarPowerUp(int jugador);       // consume uno de la cola (turno gastado)
+    bool tienePowerUp(int jugador) const;
+    TipoPowerUp verSiguientePowerUp(int jugador) const;
+
+    // Consultas de efectos activos (para tanques y balas)
+    bool getPrecisionMov(int jugador)    const { return precisionMovJ[jugador]; }
+    bool getPrecisionAtaque(int jugador) const { return precisionAtaqueJ[jugador]; }
+    bool getPoderAtaque(int jugador)     const { return poderAtaqueJ[jugador]; }
+
+    // Consumir efecto tras usarlo
+    void consumirPrecisionMov(int jugador)    { precisionMovJ[jugador]    = false; }
+    void consumirPrecisionAtaque(int jugador) { precisionAtaqueJ[jugador] = false; }
+    void consumirPoderAtaque(int jugador)     { poderAtaqueJ[jugador]     = false; }
+
+    int getCantidadPowerUps(int jugador) const;
 };
 
-
-#endif //TANKATTACK_GAMEMANAGER_H
+#endif

@@ -25,6 +25,8 @@ class Bala {
     int destinoY;
     int rebotesRestantes;
     bool activa;
+    bool modoAEstrella;
+    bool modoPoder;
     Tank* tanqueOrigen;
 
     // ── Animación ──
@@ -34,7 +36,9 @@ class Bala {
 public:
     Bala(int origenX, int origenY,
          int destinoX, int destinoY,
-         Tank* tanqueOrigen);
+         Tank* tanqueOrigen,
+         bool modoAEstrella = false,
+         bool modoPoder = false);
 
     // Ahora recibe dt en lugar de moverse instantáneamente
     void actualizar(float dt, Graph& grafo, Tank** tanques, int numTanques);
@@ -42,6 +46,9 @@ public:
     bool estaActiva() const;
     int getX() const;
     int getY() const;
+    bool esModoAEstrella() const { return modoAEstrella; }
+    bool esModoPoder()     const { return modoPoder; }
+    void avanzarAEstrella(Graph& grafo);
 
 private:
     TipoRebote detectarRebote(int nx, int ny, Graph& grafo);

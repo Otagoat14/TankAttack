@@ -36,6 +36,16 @@ PantallaJuego::PantallaJuego(int ancho, int alto,
         UIColores::BLANCO_DESG,
         UIColores::ACENTO_ROJO
     );
+
+    textoPowerUpJ1.setFont(UIManager::instancia().getFuente());
+    textoPowerUpJ1.setCharacterSize(7);
+    textoPowerUpJ1.setFillColor(sf::Color(220, 185, 80));
+    textoPowerUpJ1.setPosition(MARGEN, alto - ALTO_PANEL_INF + 80);
+
+    textoPowerUpJ2.setFont(UIManager::instancia().getFuente());
+    textoPowerUpJ2.setCharacterSize(7);
+    textoPowerUpJ2.setFillColor(sf::Color(220, 185, 80));
+    textoPowerUpJ2.setPosition(ancho / 2.0f + MARGEN, alto - ALTO_PANEL_INF + 80);
 }
 
 PantallaJuego::~PantallaJuego() {
@@ -313,6 +323,12 @@ void PantallaJuego::construirPanelPowerUps() {
 void PantallaJuego::manejarEvento(sf::Event& evento,
                                    sf::Vector2i mousePos) {
     botonMenu->manejarEvento(evento, mousePos);
+    if (evento.type == sf::Event::KeyPressed &&
+    evento.key.code == sf::Keyboard::LShift) {
+        int jugador = gm->getJugadorActivo();
+        gm->aplicarPowerUp(jugador);
+    }
+
 
     if (evento.type == sf::Event::MouseButtonPressed) {
 
@@ -358,7 +374,10 @@ void PantallaJuego::manejarClick(int col, int row)
             }
 
             // DESPUÉS:
-            tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa);
+            int jugador = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
+            bool alta   = gm->getPrecisionMov(jugador);
+            tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa, alta);
+            if (alta) gm->consumirPrecisionMov(jugador);
 
             // Capturar ruta para visualizarla
             rutaTanqueVisible.limpiar();
@@ -391,7 +410,12 @@ void PantallaJuego::manejarClick(int col, int row)
 void PantallaJuego::manejarDisparo(int col, int row) {
     if (tanqueSeleccionado == -1 || balaActiva != nullptr) return;
 
-    balaActiva = tanques[tanqueSeleccionado]->disparar(col, row);
+    int  jugador  = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
+    bool astar    = gm->getPrecisionAtaque(jugador);
+    bool poder    = gm->getPoderAtaque(jugador);
+    balaActiva    = tanques[tanqueSeleccionado]->disparar(col, row, astar, poder);
+    if (astar)  gm->consumirPrecisionAtaque(jugador);
+    if (poder)  gm->consumirPoderAtaque(jugador);
 
     // Calcular trayectoria completa para visualizarla
     rutaBalaVisible.limpiar();
@@ -493,6 +517,29 @@ void PantallaJuego::actualizar(float dt, sf::Vector2i mousePos) {
             balaActiva = nullptr;
         }
     }
+
+    // Texto power-ups J1
+    auto nombrePU = [](TipoPowerUp t) -> string {
+        switch(t) {
+            case TipoPowerUp::DOBLE_TURNO:          return "DOBLE TURNO";
+            case TipoPowerUp::PRECISION_MOVIMIENTO: return "PREC. MOV";
+            case TipoPowerUp::PRECISION_ATAQUE:     return "PREC. ATAQUE";
+            case TipoPowerUp::PODER_ATAQUE:         return "PODER ATQ";
+            default: return "?";
+        }
+    };
+
+    if (gm->tienePowerUp(0))
+        textoPowerUpJ1.setString("PU(" + to_string(gm->getCantidadPowerUps(0)) + "): " +
+                                  nombrePU(gm->verSiguientePowerUp(0)));
+    else
+        textoPowerUpJ1.setString("Sin power-ups");
+
+    if (gm->tienePowerUp(1))
+        textoPowerUpJ2.setString("PU(" + to_string(gm->getCantidadPowerUps(1)) + "): " +
+                                  nombrePU(gm->verSiguientePowerUp(1)));
+    else
+        textoPowerUpJ2.setString("Sin power-ups");
 }
 
 // ── Dibujo por secciones ────────────────────────────────────────────────────
@@ -571,6 +618,8 @@ void PantallaJuego::dibujarPanelInferior(sf::RenderWindow& v) {
         v.draw(labelTanqueJ2[i]);
         barraVidaJ2[i]->dibujar(v);
     }
+    v.draw(textoPowerUpJ1);
+    v.draw(textoPowerUpJ2);
 }
 
 void PantallaJuego::dibujarPanelPowerUps(sf::RenderWindow& v) {

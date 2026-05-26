@@ -9,7 +9,7 @@
 class tankDijkstra : public Tank {
 public:
     tankDijkstra(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(int nx, int ny, Graph& grafo, Map& map) override;
+    void moverse(int nx, int ny, Graph& grafo, Map& map, bool altaPrecision = false) override;
 
 private:
     Camino Dijkstra(Graph& grafo, Map& map, Posicion inicio, Posicion destino);

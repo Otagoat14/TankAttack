@@ -9,7 +9,7 @@
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);
-    void moverse(int nx, int ny, Graph& grafo, Map& map) override;
+    void moverse(int nx, int ny, Graph& grafo, Map& map, bool altaPrecion = false) override;
 
 private:
     Camino BFS(Graph& grafo, Posicion inicio, Posicion destino);

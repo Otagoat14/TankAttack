@@ -58,7 +58,7 @@ class Cola {
         return dato;
     }
 
-    T getFrente() {
+    T getFrente() const {
         if (empty()) {
             cout << "La cola esta vacia" << endl;
         }
@@ -295,4 +295,116 @@ public:
     bool vacia() const { return cabeza == nullptr; }
 };
 
+
+// ── Power-ups ─────────────────────────────────────────────────────────────
+enum class TipoPowerUp {
+    DOBLE_TURNO,
+    PRECISION_MOVIMIENTO,
+    PRECISION_ATAQUE,
+    PODER_ATAQUE
+};
+
+// ── A* ────────────────────────────────────────────────────────────────────
+inline Camino aStar(Graph& grafo, Posicion inicio, Posicion destino) {
+    int totalNodos = grafo.getTotalNodos();
+
+    int*  gCost   = new int[totalNodos];
+    int*  hCost   = new int[totalNodos];
+    int*  fCost   = new int[totalNodos];
+    int*  padre   = new int[totalNodos];
+    bool* abierto = new bool[totalNodos];
+    bool* cerrado = new bool[totalNodos];
+
+    for (int i = 0; i < totalNodos; i++) {
+        gCost[i]   = 99999;
+        hCost[i]   = 0;
+        fCost[i]   = 99999;
+        padre[i]   = -1;
+        abierto[i] = false;
+        cerrado[i] = false;
+    }
+
+    int nodoInicio  = grafo.getNodo(inicio.r,   inicio.c);
+    int nodoDestino = grafo.getNodo(destino.r, destino.c);
+
+    // Heuristica Manhattan
+    auto heuristica = [&](int nodo) -> int {
+        int r, c;
+        grafo.getCords(nodo, r, c);
+        return abs(r - destino.r) + abs(c - destino.c);
+    };
+
+    gCost[nodoInicio]   = 0;
+    hCost[nodoInicio]   = heuristica(nodoInicio);
+    fCost[nodoInicio]   = hCost[nodoInicio];
+    abierto[nodoInicio] = true;
+
+    bool encontrado = false;
+
+    while (true) {
+        // Encontrar nodo abierto con menor fCost
+        int actual = -1;
+        for (int i = 0; i < totalNodos; i++) {
+            if (abierto[i] && !cerrado[i]) {
+                if (actual == -1 || fCost[i] < fCost[actual])
+                    actual = i;
+            }
+        }
+
+        if (actual == -1) break;  // no hay camino
+
+        if (actual == nodoDestino) { encontrado = true; break; }
+
+        abierto[actual] = false;
+        cerrado[actual] = true;
+
+        int vecinos[4];
+        int numVecinos = 0;
+        grafo.getVecinos(actual, vecinos, numVecinos);
+
+        for (int i = 0; i < numVecinos; i++) {
+            int v = vecinos[i];
+            if (cerrado[v]) continue;
+
+            int nuevoG = gCost[actual] + 1;
+            if (nuevoG < gCost[v]) {
+                gCost[v]   = nuevoG;
+                hCost[v]   = heuristica(v);
+                fCost[v]   = gCost[v] + hCost[v];
+                padre[v]   = actual;
+                abierto[v] = true;
+            }
+        }
+    }
+
+    // Reconstruir camino manualmente (no podemos llamar Tank::reconstruirCamino)
+    Camino camino;
+    if (encontrado) {
+        int longitud = 0;
+        int actual   = nodoDestino;
+        while (actual != -1) { longitud++; actual = padre[actual]; }
+
+        int* ruta = new int[longitud];
+        actual    = nodoDestino;
+        for (int i = longitud - 1; i >= 0; i--) {
+            ruta[i] = actual;
+            actual  = padre[actual];
+        }
+        for (int i = 0; i < longitud; i++) {
+            int r, c;
+            grafo.getCords(ruta[i], r, c);
+            camino.push(c, r);
+        }
+        delete[] ruta;
+    }
+
+    delete[] gCost;
+    delete[] hCost;
+    delete[] fCost;
+    delete[] padre;
+    delete[] abierto;
+    delete[] cerrado;
+
+    return camino;
+}
 #endif

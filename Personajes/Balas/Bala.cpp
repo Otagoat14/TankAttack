@@ -2,19 +2,24 @@
 #include "../Tanques/Tank.h"
 #include <iostream>
 #include <cmath>
+#include "../../Utils.h"
 
 using namespace std;
 
 Bala::Bala(int origenX, int origenY,
            int destinoX, int destinoY,
-           Tank* tanqueOrigen)
+           Tank* tanqueOrigen,
+           bool modoAEstrella,
+           bool modoPoder)
     : x(origenX), y(origenY),
       destinoX(destinoX), destinoY(destinoY),
       rebotesRestantes(MAX_REBOTES),
       activa(true),
       tanqueOrigen(tanqueOrigen),
       tiempoAcumulado(0),
-      tiempoMovimiento(0.05f) {  // más rápida que los tanques
+      tiempoMovimiento(0.05f),
+      modoAEstrella(modoAEstrella),
+      modoPoder(modoPoder) {
 
     int dx = destinoX - origenX;
     int dy = destinoY - origenY;
@@ -22,15 +27,40 @@ Bala::Bala(int origenX, int origenY,
     dirY = (dy == 0) ? 0 : (dy > 0 ? 1 : -1);
 }
 
-void Bala::actualizar(float dt, Graph& grafo,
-                       Tank** tanques, int numTanques) {
+void Bala::avanzarAEstrella(Graph& grafo) {
+    if (x == destinoX && y == destinoY) {
+        activa = false;
+        return;
+    }
+
+    Posicion inicio  = {y, x};
+    Posicion destino = {destinoY, destinoX};
+    Camino camino    = aStar(grafo, inicio, destino);
+
+    if (camino.empty()) { activa = false; return; }
+
+    // Tomar el segundo nodo (el primero es la posición actual)
+    NodoCamino* nodo = camino.getCabeza();
+    if (nodo != nullptr) nodo = nodo->siguiente;
+
+    if (nodo == nullptr) { activa = false; return; }
+
+    x = nodo->x;
+    y = nodo->y;
+}
+
+void Bala::actualizar(float dt, Graph& grafo, Tank** tanques, int numTanques) {
     if (!activa) return;
 
     tiempoAcumulado += dt;
     if (tiempoAcumulado < tiempoMovimiento) return;
-
     tiempoAcumulado = 0;
-    avanzarUnPaso(grafo);
+
+    if (modoAEstrella) {
+        avanzarAEstrella(grafo);
+    } else {
+        avanzarUnPaso(grafo);
+    }
 
     if (activa)
         verificarYAplicarDano(tanques, numTanques);
@@ -76,13 +106,19 @@ void Bala::verificarYAplicarDano(Tank** tanques, int numTanques) {
 
 void Bala::aplicarDano(Tank* tanque) {
     if (tanque == nullptr) return;
-    Color colorTanque = tanque->getColor();
-    int vidaMax       = tanque->getVidaMax();
+
     int dano;
-    if (colorTanque == Color::CELESTE || colorTanque == Color::AZUL)
-        dano = (int)(vidaMax * 0.25f);
-    else
-        dano = (int)(vidaMax * 0.50f);
+    if (modoPoder) {
+        dano = tanque->getVidaMax();   // 100% de daño
+    } else {
+        Color colorTanque = tanque->getColor();
+        int   vidaMax     = tanque->getVidaMax();
+        if (colorTanque == Color::CELESTE || colorTanque == Color::AZUL)
+            dano = (int)(vidaMax * 0.25f);
+        else
+            dano = (int)(vidaMax * 0.50f);
+    }
+
     tanque->recibirDano(dano);
     activa = false;
 }
@@ -108,6 +144,8 @@ void Bala::aplicarRebote(TipoRebote tipo) {
         default: break;
     }
 }
+
+
 
 bool Bala::estaActiva() const { return activa; }
 int  Bala::getX()       const { return x; }

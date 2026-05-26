@@ -14,8 +14,10 @@ Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vid
     nodoActual = nullptr;
 }
 
-Bala* Tank::disparar(int destinoX, int destinoY) {
-    return new Bala(getX(), getY(), destinoX, destinoY, this);
+Bala* Tank::disparar(int destinoX, int destinoY,
+                     bool modoAEstrella, bool modoPoder) {
+    return new Bala(getX(), getY(), destinoX, destinoY, this,
+                    modoAEstrella, modoPoder);
 }
 
 int Tank::getX() const { return x; }

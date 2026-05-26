@@ -6,11 +6,11 @@ using namespace std;
 tankBFS::tankBFS(int x, int y, int vida, Equipo equipo, Color color)
     : Tank(x, y, vida, equipo, color) {}
 
-void tankBFS::moverse(int nx, int ny, Graph& grafo, Map& map) {
+void tankBFS::moverse(int nx, int ny, Graph& grafo, Map& map, bool altaPrecision) {
     // 50% BFS, 50% aleatorio
+    int umbral   = altaPrecision ? 90 : 50;
     int decision = rand() % 100;
-
-    if (decision < 50) {
+    if (decision < umbral) {
         // BFS
         Posicion inicio  = {getY(), getX()};
         Posicion destino = {ny, nx};
