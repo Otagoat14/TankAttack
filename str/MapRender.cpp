@@ -1,6 +1,7 @@
 #include "MapRender.h"
 #include <iostream>
 
+//Inicializa el render del mapa
 MapRender::MapRender(Map& mapa, Graph& grafo,
                      int offsetX, int offsetY,
                      int areaX, int areaY)
@@ -11,11 +12,14 @@ MapRender::MapRender(Map& mapa, Graph& grafo,
 
     celda = new DatosCelda[filas * colm];
 
+    //Calcula el tamaño minimo para los lados del cuadrado
+    //para la celda del mapa
     cellSize = std::min(
         areaX / grafo.getCols(),
         areaY / grafo.getRows()
     );
 
+    // Centra el mapa dentro del area designada
     anchoMapa = cellSize * grafo.getCols();
     altoMapa  = cellSize * grafo.getRows();
 
@@ -26,14 +30,13 @@ MapRender::MapRender(Map& mapa, Graph& grafo,
     construirMapa();
 }
 
+//Destructor
 MapRender::~MapRender() {
     delete[] celda;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Carga las texturas desde Interfaz/Sprites/
-// La ruta es relativa al ejecutable (cmake-build-debug/)
-// ─────────────────────────────────────────────────────────────────────────────
+// Carga las texturas desde Interfaz/Sprites/}
+// Si alguna falla la pone como false
 void MapRender::cargarTexturas() {
     texturasCargadas = true;
 
@@ -58,9 +61,7 @@ void MapRender::cargarTexturas() {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Devuelve la textura correspondiente al peso
-// ─────────────────────────────────────────────────────────────────────────────
 sf::Texture& MapRender::getTextura(int peso) {
     switch (peso) {
         case  1: return texCesped;
@@ -98,23 +99,27 @@ void MapRender::construirMapa() {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Utilidades
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Retorna el tamaño en pixeles de cada celda
 float const MapRender::getCellSize(){return cellSize;}
 
+//Convierte la coordenadas de la pantalla a las coordenadas de una celda
 sf::Vector2i MapRender::obtenerCelda(int px, int py) {
     int fila    = (py - offsetY) / cellSize;
     int columna = (px - offsetX) / cellSize;
     return sf::Vector2i(columna, fila);
 }
 
+//Retorna los pixeles centrales de el de una celda
 sf::Vector2f MapRender::obtenerCentro(int fila, int colm) {
     int px = offsetX + colm * cellSize + (cellSize / 2);
     int py = offsetY + fila * cellSize + (cellSize / 2);
     return sf::Vector2f(px, py);
 }
 
+//Busca la primera celda trancitable apartr de la coordenada de inicio para renderizar el tanque
+//Guarda las cordenadas en colResult y filaResult
 bool MapRender::encontrarPosLibre(int colInicio, int filaInicio, bool desdeIzq, int& colResult, int& filaResult) {
     for (int f = filaInicio; f < filas; f++) {
         if (desdeIzq) {
@@ -135,9 +140,9 @@ bool MapRender::encontrarPosLibre(int colInicio, int filaInicio, bool desdeIzq, 
     }
     return false;
 }
-// ─────────────────────────────────────────────────────────────────────────────
-// Dibujo
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Dibuja todos los sprites del mapa en la ventana recorriendo el arreglo de celdas
+
 void MapRender::dibujar(sf::RenderWindow& ventana) {
     for (int i = 0; i < filas * colm; i++) {
         ventana.draw(celda[i].sprite);

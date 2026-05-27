@@ -4,6 +4,7 @@
 
 #include "TankRenderer.h"
 
+// Carga las 4 texturas de tanques y las asigna a sus sprites
 TankRenderer::TankRenderer(MapRender& mapaRender) : mapaRender(mapaRender)
 {
     texturas[0].loadFromFile("Sprites/tanqueAz.png");   // AZUL
@@ -17,6 +18,7 @@ TankRenderer::TankRenderer(MapRender& mapaRender) : mapaRender(mapaRender)
     }
 };
 
+//Retorna el indice del color de cada tanque
 int TankRenderer::giveColor(Color color)
 {
     switch (color)
@@ -29,6 +31,7 @@ int TankRenderer::giveColor(Color color)
     }
 };
 
+//Retorna el indice de que parte del sprite debe proyectar segun direccion
 int TankRenderer::getColumna(Direccion dir)
 {
     switch (dir)
@@ -41,7 +44,8 @@ int TankRenderer::getColumna(Direccion dir)
     }
 };
 
-
+// Calcula el IntRect para recortar el frame correcto del sprite
+// Cada frame tiene spriteAncho+5 de separacion horizontal
 sf::IntRect TankRenderer::calcPosicion(Direccion dir)
 {
     int x = getColumna(dir) * (spriteAncho + 5) + 5;
@@ -49,6 +53,7 @@ sf::IntRect TankRenderer::calcPosicion(Direccion dir)
     return sf::IntRect(x, y, spriteAncho, spriteAlto);
 };
 
+// Dibuja cada tanque vivo en su posicion del mapa
 void TankRenderer::dibujarTanques(sf::RenderWindow& ventana, Tank** tanques, int numTanques)
 {
     for (int i = 0; i < numTanques; i++)

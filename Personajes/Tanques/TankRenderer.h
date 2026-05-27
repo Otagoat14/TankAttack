@@ -11,6 +11,7 @@
 #include "../../str/MapRender.h"
 #include "SFML/Graphics/Rect.hpp"
 
+// Dimensiones en pixeles de cada frame del sprite
 int inline spriteAlto = 189;
 int inline spriteAncho = 331;
 
@@ -29,9 +30,11 @@ class TankRenderer
     sf::IntRect calcPosicion(Direccion dir);
 
 public:
+    // Inicializa las 4 texturas y sus sprites correspondientes
     TankRenderer(MapRender& mapaRender);
     ~TankRenderer();
 
+    // Dibuja todos los tanques vivos en la ventana con su direccion y posicion inicial
     void dibujarTanques(sf::RenderWindow& ventana, Tank** tanques, int numTanques);
 
 };

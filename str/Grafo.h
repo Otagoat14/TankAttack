@@ -43,8 +43,8 @@ public:
     // Convierte índice de nodo a coordenadas
     void getCords(int n, int &row, int &col) const;
 
-    //Revisa si tiene vecinos asignados
-    bool hasVecino(int u, int v) const;
+    //Revisa si es un nodo valido en el arreglo
+    bool isNodo(int u, int v) const;
 
     //Me dice si es obstaculo
     bool esPasable(int row, int col) const;
@@ -52,9 +52,12 @@ public:
     //Devuelve el total de nodos
     int getTotalNodos() const { return totalNodes; }
 
+    //Obtiene el numero de columnas
     int getCols() const { return cols; }
+    //Obtiene el numero de filas
     int getRows() const { return rows; }
 
+    //Elimina todas las colecciones entre nodos
     void reset();
 
     //Bloquea el acceso a un nodo

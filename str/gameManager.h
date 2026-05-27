@@ -42,6 +42,14 @@ public:
 
     // Power-ups
     bool aplicarPowerUp(int jugador);       // consume uno de la cola (turno gastado)
+    // Otorga 2 turnos extra al jugador activo y avanza el turno inmediatamente
+    void aplicarDobleTurno();
+    // Activa el efecto de precisión de movimiento para el jugador
+    void aplicarPrecisionMovimiento(int jugador);
+    // Activa el efecto de precisión de ataque para el jugador
+    void aplicarPrecisionAtaque(int jugador);
+    // Activa el efecto de poder de ataque para el jugador
+    void aplicarPoderAtaque(int jugador);
     bool tienePowerUp(int jugador) const;
     TipoPowerUp verSiguientePowerUp(int jugador) const;
 

@@ -1,28 +1,6 @@
 //
 // Created by nacho on 5/8/2026.
 //
-// Map.cpp
-// Implementación de la clase Map.
-//
-// Map es responsable de la generación y administración del mapa de juego.
-// Trabaja en conjunto con Graph para establecer las conexiones entre celdas
-// y mantiene un arreglo de pesos que describe el costo de transitar cada nodo.
-//
-// El mapa se genera aleatoriamente con obstáculos según un porcentaje configurable.
-// Se garantiza que todas las celdas libres sean accesibles entre sí mediante
-// un algoritmo de flood-fill (BFS) que verifica la conectividad del mapa completo.
-// Si el mapa generado no es completamente accesible, se regenera automáticamente.
-//
-// Pesos asignados a cada celda:
-//   -1 → obstáculo, sin conexión en el grafo
-//    1 → celda libre y transitable
-//
-// Responsabilidades:
-//   makeMapa()      → genera obstáculos aleatoriamente y conecta celdas libres en Graph
-//   verificaAcceso()→ BFS desde el primer nodo libre, verifica que todos sean alcanzables
-//   doMapa()        → orquesta la generación y regeneración hasta obtener un mapa válido
-//   getPeso(nodo)   → retorna el peso de un nodo, usado por Dijkstra para calcular rutas
-//
 // Dependencias:
 //   Graph  → almacena las conexiones entre nodos
 //   Cola   → estructura FIFO usada en el flood-fill (definida en Utils.h)
@@ -34,6 +12,8 @@
 #include <iostream>
 using namespace std;
 
+//Inicializa el mapa con el grafo,
+//establece dimenciones y porcentaje de obstaculos
 Map::Map(Graph& grafo, int rows, int cols, int porcentaje)
     // No se puede asignar directamente
     // se necesita inicializar
@@ -48,8 +28,11 @@ Map::Map(Graph& grafo, int rows, int cols, int porcentaje)
     pesos = new int[rows * cols];
 }
 
+//Genera el mapa
+//El mapa se genera en dos pasadas
 void Map::makeMapa()
 {
+    //Primera pasada asigna aleatoriamente el tipo de terreno a cada celda
     for (int i = 0; i < rows * cols; i++)
     {
         //Se obtienen las cordenadas del nodo actual
@@ -71,6 +54,8 @@ void Map::makeMapa()
             pesos[i] = 1;
         }
     }
+    //Segunda pasada conecta en el grafo los nodos adyacentes que no sean obstáculos
+    // Solo revisa el vecino de abajo y el de la derecha
     for (int i = 0; i < rows * cols; i++){
         //Se obtienen las cordenadas del nodo actual
         int fila;
@@ -92,39 +77,49 @@ void Map::makeMapa()
             }
         }
         //No se revisa arriba ni a la izquierda dado que es un grafo no dirigido
-        ////de esta manera esos nodos ya estan cubiertos al llegar al que se evalua actualmente
+        //de esta manera esos nodos ya estan cubiertos al llegar al que se evalua actualmente
     }
 }
 
+//Verifica que todos los nodos transitables sean accesibles
 bool Map::verificaAcceso()
 {
-    //Primer nodo libre para aplicar "BFS"
-    int nInicio;
+        int nInicio = getPrimerNodoLibre();
+        if (nInicio == -1) return false; // Todo el mapa es obstáculos
 
+        //Numero de nodos libres para una comparacion posterior
+        int libres     = contarNodosLibres();
+        int alcanzados = contarAlcanzables(nInicio);
+
+        return libres == alcanzados;
+}
+
+// Retorna el índice del primer nodo libre encontrado
+int Map::getPrimerNodoLibre() {
+    //Primer nodo libre para aplicar algoritmo
+    for (int i = 0; i < rows * cols; i++) {
+        if (pesos[i] != -1) return i;
+    }
+    return -1;
+}
+
+// Cuenta cuántos nodos no son obstáculos
+int Map::contarNodosLibres() {
     //Numero de nodos libres para una comparacion posterior
-    int contLibres = 0;
-
-    //Obtener el primer nodo libre
-    for (int i = 0; i < rows * cols; i++)
-    {
-        if (pesos[i] != -1)
-        {
-            nInicio = i;
-            break;
-        }
+    int cont = 0;
+    for (int i = 0; i < rows * cols; i++) {
+        if (pesos[i] != -1) cont++;
     }
+    return cont;
+}
 
-    //Obtener el numero de nodos libres
-    for (int i = 0; i < rows * cols; i++)
-    {
-        if (pesos[i] != -1) {contLibres += 1;}
-    }
-
+// BFS desde nInicio, retorna cuántos nodos fueron alcanzados
+int Map::contarAlcanzables(int nInicio) {
     //Obtener numero de nodos libres accesibles desde el primer nodo libre
     bool* visitado = new bool[rows * cols];
     for (int i = 0; i < rows * cols; i++) visitado[i] = false;
 
-    //Crea una cola partir del primer nodo libre encontrado
+    //Crea una cola a partir del primer nodo libre encontrado
     Cola<int> cola;
     cola.enqueue(nInicio);
     visitado[nInicio] = true;
@@ -133,7 +128,7 @@ bool Map::verificaAcceso()
     //Recorre cada vecino de cada nodo
     while (!cola.empty()) {
         int actual = cola.dequeue();
-        //Agrega a un cointador cada vecino visitado
+        //Agrega a un contador cada vecino visitado
         contVecinos++;
 
         //Array para los 4 (Maximo) vecinos de cada nodo
@@ -151,9 +146,10 @@ bool Map::verificaAcceso()
     }
 
     delete[] visitado;
-    return contLibres == contVecinos;
+    return contVecinos;
 }
 
+// Regenera hasta hacer un mapa valido
 void Map::doMapa() {
     do {
         grafo.reset();

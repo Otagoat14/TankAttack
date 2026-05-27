@@ -27,7 +27,16 @@ public:
     //Funcion encargada de obtenerel peso de un nodo
     int getPeso(int nodo);
 
-    // Revisa que todas las secciones del mapa sea accesibles
+    // Retorna el índice del primer nodo libre del mapa
+    int getPrimerNodoLibre();
+
+    // Cuenta el total de nodos transitables en el mapa
+    int contarNodosLibres();
+
+    // BFS desde nInicio, retorna cuántos nodos fueron alcanzados
+    int contarAlcanzables(int nInicio);
+
+    // Verifica que todos los nodos transitables sean alcanzables entre sí
     bool verificaAcceso();
 
     //Funcion encargada de llamar la generacion del mapa y verificar que sea un mapa viable
