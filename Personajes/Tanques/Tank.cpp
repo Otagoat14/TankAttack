@@ -5,6 +5,8 @@
 
 using namespace std;
 
+
+//Constructor
 Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vida(vida), vidaMax(vida), equipo(equipo), color(color)
 {
     rutaPendiente = nullptr;
@@ -14,12 +16,14 @@ Tank::Tank(int x, int y, int vida, Equipo equipo, Color color) : x(x), y(y), vid
     nodoActual = nullptr;
 }
 
-Bala* Tank::disparar(int destinoX, int destinoY,
-                     bool modoAEstrella, bool modoPoder) {
-    return new Bala(getX(), getY(), destinoX, destinoY, this,
-                    modoAEstrella, modoPoder);
+// El this le pasa al constructor de Bala
+// una referencia al tanque que disparó así
+// la bala sabe a quién no debe hacerle daño.
+Bala* Tank::disparar(int destinoX, int destinoY, bool modoAEstrella, bool modoPoder) {
+    return new Bala(getX(), getY(), destinoX, destinoY, this, modoAEstrella, modoPoder);
 }
 
+//Getters
 int Tank::getX() const { return x; }
 int Tank::getY() const { return y; }
 int Tank::getVida() const { return vida; }
@@ -29,11 +33,15 @@ Equipo Tank::getEquipo() const { return equipo; }
 Direccion Tank::getDireccion() { return direccion; }
 bool Tank::estaVivo() const { return vida > 0; }
 
+
 void Tank::recibirDano(int danoRecibido) {
     vida -= danoRecibido;
     cout << "Recibido " << danoRecibido << endl;
 }
 
+//actualiza la dirección del tanque automáticamente comparando
+//la posición nueva con la anterior, para que el sprite se
+//dibuje mirando hacia donde se mueve.
 void Tank::setPosition(int newX, int newY) {
     if (newX != x)
     {
@@ -52,8 +60,11 @@ void Tank::setPosition(int newX, int newY) {
     y = newY;
 }
 
-void Tank::setDireccion(Direccion dir) { direccion = dir; }
+void Tank::setDireccion(Direccion dir) {
+    direccion = dir;
+}
 
+//Consulta al grafo a ver si es un bloque pasable
 bool Tank::puedeMoverse(int nx, int ny, const Graph& grafo) {
     return grafo.esPasable(ny, nx);
 }
@@ -65,32 +76,48 @@ void Tank::moverPorCeldas(const Camino& camino, Graph& grafo) {
     if (actual != nullptr)
         actual = actual->siguiente;
 
+    //actualiza el nodo y con el setPosition nos movemos
     while (actual != nullptr) {
         setPosition(actual->x, actual->y);
         actual = actual->siguiente;
     }
 }
 
+
+//Busca una posicion aleatoria en cierto radio
 Punto Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
     // Primera pasada: contar candidatos válidos
     int count = 0;
     for (int dy = -radio; dy <= radio; dy++) {
         for (int dx = -radio; dx <= radio; dx++) {
-            if (dx == 0 && dy == 0) continue;
-            if (grafo.esPasable(getY() + dy, getX() + dx))
+            //Para saltarse la pos actual
+            if (dx == 0 && dy == 0) {
+                continue;
+            }
+            //Cuenta cuando hay un campo disponible
+            if (grafo.esPasable(getY() + dy, getX() + dx)) {
                 count++;
+            }
         }
     }
 
-    if (count == 0) return Punto(-1, -1);
+    if (count == 0) {
+        return Punto(-1, -1);
+    }
 
     // Segunda pasada: elegir el índice aleatorio
+    //Devuelve un residuo que indica cual pos 0,1,2,3 usar
     int elegido = rand() % count;
     int actual = 0;
     for (int dy = -radio; dy <= radio; dy++) {
         for (int dx = -radio; dx <= radio; dx++) {
-            if (dx == 0 && dy == 0) continue;
+            //Para saltarse la pos actual
+            if (dx == 0 && dy == 0) {
+                continue;
+            }
+            //Verificar que sea pasable
             if (grafo.esPasable(getY() + dy, getX() + dx)) {
+                //El elegido se elige segun la cantidad que se contaron
                 if (actual == elegido)
                     return Punto(getX() + dx, getY() + dy);
                 actual++;
@@ -100,7 +127,9 @@ Punto Tank::buscarPosAleatoria(int radio, const Graph& grafo) {
     return Punto(-1, -1);
 }
 
+//Se usa para avanzar en el movimiento aleatorio
 void Tank::avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo) {
+    //Calcula la linea
     Camino camino = celdаsLineaVista(getX(), getY(), destinoX, destinoY, grafo);
 
     if (camino.getTamano() <= 1) {
@@ -123,14 +152,17 @@ void Tank::avanzarHastaDestino(int destinoX, int destinoY, Graph& grafo) {
 }
 
 void Tank::movimientoAleatorio(int destinoX, int destinoY, Graph& grafo) {
+    //Se ve si hay un camino sin obstaculos
     if (lineaVista(getX(), getY(), destinoX, destinoY, grafo)) {
         cout << "Linea vista libre al destino" << endl;
         avanzarHastaDestino(destinoX, destinoY, grafo);
         return;
     }
-
+    //Sino se hace un segundo intento hacia un punto alaetorio
     Punto p = buscarPosAleatoria(2, grafo);
-    if (p.x == -1) return;
+    if (p.x == -1) {
+        return;
+    }
 
     avanzarHastaDestino(p.x, p.y, grafo);
     cout << "Segundo intento hacia el destino..." << endl;
@@ -197,7 +229,9 @@ void Tank::actualizar(float dt)
             nodoActual = nodoActual->siguiente;
             tiempoAcumulado = 0;
 
-            if (nodoActual == nullptr) enMovimiento = false;
+            if (nodoActual == nullptr) {
+                enMovimiento = false;
+            }
         }
     }
 }
