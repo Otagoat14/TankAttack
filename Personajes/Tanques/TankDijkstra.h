@@ -13,7 +13,8 @@ public:
 
 private:
     Camino Dijkstra(Graph& grafo, Map& map, Posicion inicio, Posicion destino);
-    bool explorarDijkstra(Graph& grafo, Map& map, ColaPrioridad& pq, int* distancias, int* padre, bool* visitado, int nodoDestino);
+    bool explorarDijkstra(Graph& grafo, Map& map, ColaPrioridad& pq,
+                          int* distancias, int* padre, bool* visitado, int nodoDestino);
 };
 
 #endif

@@ -6,10 +6,7 @@ static const int ALTO_PANEL_SUP = 64;
 static const int ALTO_PANEL_INF = 110;
 static const int MARGEN         = 12;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constructor / Destructor
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Constructor
 PantallaJuego::PantallaJuego(int ancho, int alto,
                                function<void()> onMenuPrincipal)
     : ancho(ancho), alto(alto)
@@ -95,20 +92,16 @@ PantallaJuego::~PantallaJuego() {
     delete botonVolverMenu;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Construcción del fondo
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Construcción del fondo
 void PantallaJuego::construirFondo() {
     fondoGeneral.setSize(sf::Vector2f(ancho, alto));
     fondoGeneral.setPosition(0, 0);
     fondoGeneral.setFillColor(UIColores::FONDO_BASE);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Panel superior
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Panel superior
 void PantallaJuego::construirPanelSuperior() {
     // Fondo del panel
     panelSuperior.setSize(sf::Vector2f(ancho, ALTO_PANEL_SUP));
@@ -117,14 +110,14 @@ void PantallaJuego::construirPanelSuperior() {
     panelSuperior.setOutlineColor(UIColores::METAL_CLARO);
     panelSuperior.setOutlineThickness(1);
 
-    // ── Jugador 1 (lado izquierdo) ──
+    // ── Jugador 1 (lado izquierdo)
     textoLabelJ1.setFont(UIManager::instancia().getFuente());
     textoLabelJ1.setString("JUGADOR 1");
     textoLabelJ1.setCharacterSize(13);
     textoLabelJ1.setFillColor(sf::Color(200, 80, 60));
     textoLabelJ1.setPosition((ancho/2.0f) - 220, 10);
 
-    // ── Jugador 2 (lado derecho) ──
+    // ── Jugador 2 (lado derecho)
     textoLabelJ2.setFont(UIManager::instancia().getFuente());
     textoLabelJ2.setString("JUGADOR 2");
     textoLabelJ2.setCharacterSize(13);
@@ -133,7 +126,7 @@ void PantallaJuego::construirPanelSuperior() {
     sf::FloatRect bJ2 = textoLabelJ2.getLocalBounds();
     textoLabelJ2.setPosition((ancho/2.0f) + 100, 10);
 
-    // ── Tiempo (centro) ──
+    // Tiempo (centro)
     textoLabelTiempo.setFont(UIManager::instancia().getFuente());
     textoLabelTiempo.setString("TIEMPO");
     textoLabelTiempo.setCharacterSize(7);
@@ -151,10 +144,8 @@ void PantallaJuego::construirPanelSuperior() {
     textoTiempo.setPosition(ancho / 2.0f, 22);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Área del mapa (placeholder)
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Área del mapa
 void PantallaJuego::construirAreaMapa() {
     float yInicio  = ALTO_PANEL_SUP + MARGEN;
     float altoArea = alto - ALTO_PANEL_SUP - ALTO_PANEL_INF - MARGEN * 2;
@@ -224,10 +215,8 @@ void PantallaJuego::construirTanques() {
     gm = new gameManager(tanques);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Panel inferior
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Panel inferior
 void PantallaJuego::construirPanelInferior() {
     float yInf = alto - ALTO_PANEL_INF;
 
@@ -261,7 +250,7 @@ void PantallaJuego::construirPanelInferior() {
     string nombresJ2[2] = { "AMAR", "CELES" };
 
     for (int i = 0; i < 2; i++) {
-        // ── Jugador 1 ──
+        //Jugador 1
         float xSlotJ1 = MARGEN + i * (slotAncho + MARGEN);
 
         iconoTanqueJ1[i].setSize(sf::Vector2f(iconoSide, iconoSide));
@@ -284,7 +273,7 @@ void PantallaJuego::construirPanelInferior() {
             100, ""
         );
 
-        // ── Jugador 2 ──
+        //Jugador 2
         float xSlotJ2 = mitad + MARGEN + i * (slotAncho + MARGEN);
 
         iconoTanqueJ2[i].setSize(sf::Vector2f(iconoSide, iconoSide));
@@ -309,10 +298,7 @@ void PantallaJuego::construirPanelInferior() {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Panel de power-ups
-// ─────────────────────────────────────────────────────────────────────────────
-
 void PantallaJuego::construirPanelPowerUps() {
     float yInf      = alto - ALTO_PANEL_INF;
     float anchoPow  = 180;
@@ -348,10 +334,7 @@ void PantallaJuego::construirPanelPowerUps() {
     labelPowerUpJ2.setPosition(xPowJ2 + 6, yPow + 8);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Eventos / Actualización / Dibujo
-// ─────────────────────────────────────────────────────────────────────────────
-
 void PantallaJuego::manejarEvento(sf::Event& evento,
                                    sf::Vector2i mousePos) {
     botonMenu->manejarEvento(evento, mousePos);
@@ -411,7 +394,6 @@ void PantallaJuego::manejarClick(int col, int row)
                 }
             }
 
-            // DESPUÉS:
             int jugador = (tanques[tanqueSeleccionado]->getEquipo() == Equipo::JUGADOR1) ? 0 : 1;
             bool alta   = gm->getPrecisionMov(jugador);
             tanques[tanqueSeleccionado]->moverse(col, row, *grafo, *mapa, alta);
@@ -460,7 +442,7 @@ void PantallaJuego::manejarDisparo(int col, int row) {
     rutaTanqueVisible.limpiar();
 
     if (astar) {
-        // Visualizar ruta A* real: calcular el camino completo de una vez
+        // Visualizar ruta A*
         Posicion inicio  = { balaActiva->getY(), balaActiva->getX() };
         Posicion destino = { row, col };
         Camino camino = aStar(*grafo, inicio, destino);

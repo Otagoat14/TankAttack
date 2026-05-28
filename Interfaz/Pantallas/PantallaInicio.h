@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// ─── Partícula de chispa ──────────────────────────────────────────────────────
+// Partícula de chispa
 struct Chispa {
     sf::CircleShape forma;
     sf::Vector2f velocidad;
@@ -20,7 +20,7 @@ struct Chispa {
     float vidaMax;
 };
 
-// ─── Explosión pequeña ────────────────────────────────────────────────────────
+//Explosión pequeña
 struct Explosion {
     sf::CircleShape anillo;
     sf::CircleShape centro;
@@ -30,7 +30,7 @@ struct Explosion {
     sf::Vector2f pos;
 };
 
-// ─── Bala cruzando el fondo ───────────────────────────────────────────────────
+//Bala cruzando el fondo
 struct BalaFondo {
     sf::RectangleShape forma;
     sf::RectangleShape estela;
@@ -40,7 +40,7 @@ struct BalaFondo {
 };
 
 
-// ─── Letra del título con daño ───────────────────────────────────────────────
+//Letra del título con daño
 struct LetraTitulo {
     sf::Text texto;
     float    offsetX;      // vibración horizontal
@@ -56,47 +56,47 @@ class PantallaInicio {
     int ancho;
     int alto;
 
-    // ── Fondo ──
+    //Fondo
 
     sf::Texture textureFondo;
     sf::Sprite  spriteFondo;
     bool        fondoCargado;
     vector<sf::RectangleShape> grietas;
 
-    // ── Elementos del campo de batalla ──
+    //Elementos del campo de batalla
     vector<BalaFondo>   balasFondo;
     vector<Explosion>   explosiones;
     vector<Chispa>      chispas;
 
-    // ── Título con efecto de daño ──
+    //Título con efecto de daño
     vector<LetraTitulo> letras;
     sf::Clock           relojTitulo;
 
-    // ── Líneas decorativas ──
+    //Líneas decorativas
     sf::RectangleShape lineaArriba;
     sf::RectangleShape lineaAbajo;
 
-    // ── Botones ──
+    //Botones
     Boton* botonJugar;
     Boton* botonSalir;
 
-    // ── Texto institucional ──
+    //Texto institucional
     sf::Text textoITCR;
     sf::Text textoInstrucciones;
 
-    // ── Relojes ──
+    //Relojes
     sf::Clock relojBajas;    // genera nuevas balas en el fondo
     sf::Clock relojExplos;   // genera explosiones aleatorias
 
     sf::RectangleShape      fondoTitulo;     // rectángulo central
 
-    // ── Construcción ──
+    //Construcción
     void construirFondo();
     void construirFondoTitulo();
     void construirTitulo();
     void construirTextoExtra();
 
-    // ── Actualización ──
+    //Actualización
     void actualizarTitulo(float dt);
     void actualizarBalasFondo(float dt);
     void actualizarExplosiones(float dt);
@@ -106,7 +106,7 @@ class PantallaInicio {
     void generarChispas(float x, float y, sf::Color color, int cantidad);
     void aplicarImpactoLetra(LetraTitulo& letra);
 
-    // ── Dibujo ──
+    //DibujO
     void dibujarFondo(sf::RenderWindow& v);
     void dibujarBalasFondo(sf::RenderWindow& v);
     void dibujarExplosiones(sf::RenderWindow& v);

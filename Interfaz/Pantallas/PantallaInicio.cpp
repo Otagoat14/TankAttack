@@ -4,9 +4,7 @@
 
 using namespace std;
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Constructor
-// ─────────────────────────────────────────────────────────────────────────────
 PantallaInicio::PantallaInicio(int ancho, int alto,
                                 function<void()> onJugar,
                                 function<void()> onSalir)
@@ -53,10 +51,8 @@ PantallaInicio::~PantallaInicio() {
     delete botonSalir;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Construcción
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Construcción
 void PantallaInicio::construirFondo() {
     fondoCargado = textureFondo.loadFromFile(
         "../Recursos/Imagenes/fondo_menu.png"
@@ -142,10 +138,8 @@ void PantallaInicio::construirTextoExtra() {
     textoInstrucciones.setPosition(ancho / 2.0f, alto - 38);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Generadores
-// ─────────────────────────────────────────────────────────────────────────────
 
+// GeneradoreS
 void PantallaInicio::generarBalaFondo() {
     BalaFondo b;
 
@@ -240,10 +234,8 @@ void PantallaInicio::generarChispas(float x, float y,
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Actualización
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Actualización
 void PantallaInicio::aplicarImpactoLetra(LetraTitulo& l) {
     l.tiempoVibra = 0.25f;
     l.offsetX     = (rand() % 10 - 5);
@@ -383,10 +375,8 @@ void PantallaInicio::actualizarChispas(float dt) {
             chispas.erase(chispas.begin() + i);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Eventos y loop público
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Eventos y loop público
 void PantallaInicio::manejarEvento(sf::Event& evento,
                                     sf::Vector2i mousePos) {
     botonJugar->manejarEvento(evento, mousePos);
@@ -403,9 +393,8 @@ void PantallaInicio::actualizar(float dt, sf::Vector2i mousePos) {
     actualizarChispas(dt);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // Dibujo
-// ─────────────────────────────────────────────────────────────────────────────
 
 void PantallaInicio::dibujarFondo(sf::RenderWindow& v) {
     if (fondoCargado)
@@ -455,8 +444,8 @@ void PantallaInicio::dibujarTitulo(sf::RenderWindow& v) {
 }
 
 void PantallaInicio::dibujar(sf::RenderWindow& ventana) {
-    // Orden de capas: fondo → tanques → balas → explosiones
-    // → chispas → título → botones → texto
+    // Orden de capas: fondo,  tanques,  balas,  explosiones,
+    //  chispas,  título,  botones,  texto
     dibujarFondo(ventana);
     dibujarBalasFondo(ventana);
     dibujarExplosiones(ventana);

@@ -6,6 +6,7 @@
 #include "../../str/Grafo.h"
 #include "../../str/Map.h"
 
+
 class tankBFS : public Tank {
 public:
     tankBFS(int x, int y, int vida, Equipo equipo, Color color);

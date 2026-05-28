@@ -43,8 +43,6 @@ namespace UIColores {
 }
 class UIManager {
     sf::Font fuente;
-    // sf::SoundBuffer bufferClick;  // descomentar cuando tengan el archivo
-    // sf::Sound sonidoClick;
 
     bool fuenteCargada;
 
@@ -55,9 +53,6 @@ class UIManager {
         if (!fuenteCargada)
             cout << "Error: no se pudo cargar la fuente" << endl;
 
-        // Cunao haya sonido
-        // bufferClick.loadFromFile("Recursos/Sonidos/click.wav");
-        // sonidoClick.setBuffer(bufferClick);
     }
 
 public:
@@ -68,9 +63,6 @@ public:
 
     const sf::Font& getFuente() const { return fuente; }
 
-    void reproducirClick() {
-        // sonidoClick.play();  // descomentar cuando se tenga el sonido de los botones
-    }
 
     // Eliminar copias
     UIManager(const UIManager&)            = delete;

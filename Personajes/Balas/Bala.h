@@ -29,7 +29,7 @@ class Bala {
     bool modoPoder;
     Tank* tanqueOrigen;
 
-    // ── Animación ──
+    //Animación
     float tiempoAcumulado;
     float tiempoMovimiento;  // segundos entre cada paso
 
