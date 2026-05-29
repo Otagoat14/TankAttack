@@ -79,8 +79,6 @@ void Boton::manejarEvento(sf::Event& evento, sf::Vector2i mousePos) {
     if (evento.type == sf::Event::MouseButtonPressed &&
         evento.mouseButton.button == sf::Mouse::Left &&
         estaHover) {
-
-        UIManager::instancia().reproducirClick();
         if (accion) accion();
     }
 }
