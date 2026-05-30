@@ -117,14 +117,13 @@ bool gameManager::aplicarPowerUp(int jugador) {
         aplicarPoderAtaque(jugador);
         break;
     }
-
+    registrarAccion();
+    siguienteTurno();
     return true;
 }
 
 void gameManager::aplicarDobleTurno() {
     turnosExtrasRestantes = 2;
-    registrarAccion();
-    siguienteTurno();
 }
 
 // Activa el efecto de precisión de movimiento para el jugador
