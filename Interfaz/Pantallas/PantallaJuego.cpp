@@ -202,8 +202,8 @@ void PantallaJuego::construirTanques() {
     mapRender->encontrarPosLibre(cols - 2, rows / 2,     false, c3, f3);
 
     tanques[0] = new tankBFS     (c0, f0, 100, Equipo::JUGADOR1, Color::ROJO);
-    tanques[1] = new tankBFS     (c1, f1, 100, Equipo::JUGADOR1, Color::AZUL);
-    tanques[2] = new tankDijkstra(c2, f2, 100, Equipo::JUGADOR2, Color::AMARILLO);
+    tanques[1] = new tankBFS     (c1, f1, 100, Equipo::JUGADOR1, Color::AMARILLO);
+    tanques[2] = new tankDijkstra(c2, f2, 100, Equipo::JUGADOR2, Color::AZUL);
     tanques[3] = new tankDijkstra(c3, f3, 100, Equipo::JUGADOR2, Color::CELESTE);
 
     tanques[0]->setDireccion(Direccion::OESTE);
